@@ -1,5 +1,6 @@
 package com.tybbt.knowledgebase.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,6 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 @RestController
 public class TestController {
+    // 用于加载application自定义配置项，使用 custom.args:Default 作为默认配置防止转移环境时忘记配置
+    @Value("${test.hello:TEST}")
+    private String testHello;
+
     // http://127.0.0.1:8080/hello
     /**
      *  http的八种请求方式：GET POST PUT DELETE OPTIONS PATCH TRACE HEAD
@@ -18,7 +23,7 @@ public class TestController {
      */
     @RequestMapping("/hello")
     public String hello() {
-        return "Hello World!";
+        return "Hello World!" + testHello;
     }
 
     @PostMapping("/hello/post")
