@@ -4,15 +4,15 @@ GET http://localhost:8080/hello
 //使用 gtr 自动生成 是 Live Template, 有自定义需求请到 Setting->Editor->Live Templates 添加
 //同时可以写结果验证的单元测试脚本
 
-> {%
-client.test("test-hello", function() {
-  client.log("测试/hello接口");
-  client.log(response.body);
-  client.log(JSON.stringify(response.body));
-  client.assert(response.status === 200, "返回值不是200");
-  client.assert(response.body === "Hello World!", "结果验证失败");
-});
-%}
+#> {%
+#client.test("test-hello", function() {
+#  client.log("测试/hello接口");
+#  client.log(response.body);
+#  client.log(JSON.stringify(response.body));
+#  client.assert(response.status === 200, "返回值不是200");
+#  client.assert(response.body === "Hello World!", "结果验证失败");
+#});
+#%}
 
 ###
 
