@@ -1,5 +1,6 @@
 package com.tybbt.knowledgebase.controller;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,9 +14,15 @@ public class TestController {
      *      一般格式：/user?id=1  RESFUL格式：/user/1
      *  如果用requestmapping注解，表示该方法接受所有四种请求
      *  而如果想只允许GET， 则转用GetMapping注解，括号内添加args或添加参数为（value="/hello", method=RequestMethod.GET）
+     *  同时使用浏览器测试时，只能测试get请求
      */
     @RequestMapping("/hello")
     public String hello() {
-        return "Hello World！";
+        return "Hello World!";
+    }
+
+    @PostMapping("/hello/post")
+    public String posthello(String name) {
+        return "Posted Hello World!" + name;
     }
 }
