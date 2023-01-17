@@ -1,9 +1,14 @@
 package com.tybbt.knowledgebase.controller;
 
+import com.tybbt.knowledgebase.domain.Test;
+import com.tybbt.knowledgebase.service.TestService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 @RestController
@@ -12,6 +17,8 @@ public class TestController {
     @Value("${test.hello:TEST}")
     private String testHello;
 
+    @Resource
+    private TestService testService;
     // http://127.0.0.1:8080/hello
     /**
      *  http的八种请求方式：GET POST PUT DELETE OPTIONS PATCH TRACE HEAD
@@ -29,5 +36,11 @@ public class TestController {
     @PostMapping("/hello/post")
     public String posthello(String name) {
         return "Posted Hello World!" + name;
+    }
+
+    // 程序接口入口 -> 调用testService 的list方法
+    @RequestMapping("/test/list")
+    public List<Test> list(){
+        return testService.list();
     }
 }

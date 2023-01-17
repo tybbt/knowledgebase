@@ -1,5 +1,6 @@
 package com.tybbt.knowledgebase.config;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +12,7 @@ import org.springframework.core.env.Environment;
 // 但当未处于同一个包，则需额外配置参数设定访问域("com.xxx..."),参数支持列表方式({"com.tybbt", "com.jie"})
 @ComponentScan("com.tybbt.knowledgebase")
 @SpringBootApplication
+@MapperScan("com.tybbt.knowledgebase.mapper")
 public class KnowledgebaseApplication {
     private static final Logger LOG = LoggerFactory.getLogger(KnowledgebaseApplication.class);
     public static void main(String[] args) {
