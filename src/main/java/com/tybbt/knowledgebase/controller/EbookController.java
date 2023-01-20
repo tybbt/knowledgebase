@@ -1,7 +1,8 @@
 package com.tybbt.knowledgebase.controller;
 
-import com.tybbt.knowledgebase.domain.Ebook;
+import com.tybbt.knowledgebase.req.EbookReq;
 import com.tybbt.knowledgebase.resp.CommonResp;
+import com.tybbt.knowledgebase.resp.EbookResp;
 import com.tybbt.knowledgebase.service.EbookService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,9 @@ public class EbookController {
 
     // 程序接口入口 -> 调用ebookService 的list方法
     @RequestMapping("/list")
-    public CommonResp list(){
-        CommonResp<List<Ebook>> response = new CommonResp<>();
-        List<Ebook> list = ebookService.list();
+    public CommonResp list(EbookReq req){
+        CommonResp<List<EbookResp>> response = new CommonResp<>();
+        List<EbookResp> list = ebookService.list(req);
         response.setContent(list);
         return response;
     }
