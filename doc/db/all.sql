@@ -40,3 +40,5 @@ insert into ebook (id, name, description) values (2, 'Vue 入门教程', '零基
 insert into ebook (id, name, description) values (3, 'Python 入门教程', '零基础入门 Python 开发，企业级应用开发最佳首选框架');
 
 insert into ebook (id, name, description) values (4, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应用开发最佳首选框架');
+
+insert into ebook (id, name, description) values (5, 'MySQL 入门教程', '零基础入门 MySQL 开发，企业级应用开发最佳首选框架');
