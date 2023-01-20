@@ -5,11 +5,10 @@ import com.tybbt.knowledgebase.domain.EbookExample;
 import com.tybbt.knowledgebase.mapper.EbookMapper;
 import com.tybbt.knowledgebase.req.EbookReq;
 import com.tybbt.knowledgebase.resp.EbookResp;
+import com.tybbt.knowledgebase.util.CopyUtil;
 import jakarta.annotation.Resource;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,13 +23,17 @@ public class EbookService {
         // 调用EbookMapper的list方法
         List<Ebook> ebookslist = ebookMapper.selectByExample(ebookExample);
 
-        List<EbookResp> respList = new ArrayList<>();
-        for (Ebook ebook : ebookslist) {
-            EbookResp ebookResp = new EbookResp();
-            BeanUtils.copyProperties(ebook, ebookResp);
-            respList.add(ebookResp);
-        }
-
-        return respList;
+        // 实体类转换，从返回的实体类转换为封装的返回实体类
+//        List<EbookResp> respList = new ArrayList<>();
+//        for (Ebook ebook : ebookslist) {
+////            EbookResp ebookResp = new EbookResp();
+////            BeanUtils.copyProperties(ebook, ebookResp);
+        //    对象赋值
+//            EbookResp ebookResp = CopyUtil.copy(ebook, EbookResp.class);
+//            respList.add(ebookResp);
+//        }
+        // 列表复制
+        List<EbookResp> list = CopyUtil.copyList(ebookslist, EbookResp.class);
+        return list;
     }
 }
