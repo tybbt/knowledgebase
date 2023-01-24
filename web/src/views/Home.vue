@@ -119,3 +119,14 @@ export default defineComponent({
   }
 });
 </script>
+
+<!--scoped 表示改样式仅在当前文件Home生效-->
+<style scoped>
+  .ant-avatar {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 8%;
+    margin: 5px 0;
+  }
+</style>

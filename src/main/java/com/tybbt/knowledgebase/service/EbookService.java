@@ -8,6 +8,7 @@ import com.tybbt.knowledgebase.resp.EbookResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -19,7 +20,10 @@ public class EbookService {
     public List<EbookResp> list(EbookReq req){
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
-        criteria.andNameLike("%" + req.getName() + "%");
+        if (!ObjectUtils.isEmpty(req.getName())) {
+            criteria.andNameLike("%" + req.getName() + "%");
+        }
+
         // 调用EbookMapper的list方法
         List<Ebook> ebookslist = ebookMapper.selectByExample(ebookExample);
 
