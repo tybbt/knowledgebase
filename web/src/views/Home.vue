@@ -91,6 +91,7 @@ export default defineComponent({
     const ebooks = ref();
     // const ebook_re = reactive({books: []});
 
+    // 控制生命周期函数
     onMounted(() => {
       console.log("onMounted");
       axios.get("/ebook/list").then((response) => {
