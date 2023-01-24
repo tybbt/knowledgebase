@@ -19,6 +19,7 @@ public class LogFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        // Filter作用在容器上（Tomcat），启动后首先进入filter，拦截器interceptor作用在应用SpringBoot（web应用）上，被拦截器拿到，然后最后进入业务逻辑
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         LOG.info("------------- LogFilter 开始 -------------");
         LOG.info("请求地址: {} {}", request.getRequestURL().toString(), request.getMethod());
