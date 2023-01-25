@@ -20,7 +20,14 @@
           <span>
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">编辑</a-button>
-              <a-button type="primary" danger>删除</a-button>
+              <a-popconfirm
+                  title="删除后不可恢复，确认删除？"
+                  ok-text="是"
+                  cancel-text="否"
+                  @confirm="del(record.id)"
+              >
+                <a-button type="primary" danger>删除</a-button>
+              </a-popconfirm>
             </a-space>
           </span>
         </template>
@@ -29,7 +36,7 @@
   </a-layout>
 
   <a-modal
-      title="Title"
+      title="Detail"
       v-model:visible="modelVisible"
       :confirm-loading="modelLoading"
       @ok="handleModelOK"
@@ -120,7 +127,7 @@
        */
       const handleQuery = (params: any) => {
         loading.value = true;
-        axios.get("ebook/list", params).then((response) => {
+        axios.get("/ebook/list", params).then((response) => {
           loading.value = false;
           const data = response.data;
           ebooks.value = data.content;
@@ -158,7 +165,7 @@
             handleQuery({
               page: pagination.value.current,
               size: pagination.value.pageSize
-            })
+            });
           }
         });
       };
@@ -174,7 +181,21 @@
       const add = () => {
         modelVisible.value = true;
         ebook.value = {}
-      }
+      };
+
+      const del = (id: number) => {
+        axios.delete("/ebook/delete/" + id).then((response) => {
+          const data = response.data; // data = CommonResp
+          console.log(data)
+          if (data.success) {
+            //重新加载列表
+            handleQuery({
+              page: 1,
+              size: pagination.value.pageSize
+            });
+          }
+        });
+      };
 
       onMounted(() => {
         handleQuery({
@@ -194,7 +215,8 @@
         modelLoading,
         handleModelOK,
         ebook,
-        add
+        add,
+        del
       }
     }
   });
