@@ -7,6 +7,7 @@ import com.tybbt.knowledgebase.req.EbookQueryReq;
 import com.tybbt.knowledgebase.req.EbookSaveReq;
 import com.tybbt.knowledgebase.resp.EbookQueryResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
+import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -18,6 +19,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
     public List<EbookQueryResp> list(EbookQueryReq req){
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -45,6 +49,8 @@ public class EbookService {
     public void save(EbookSaveReq req) {
         Ebook ebook = CopyUtil.copy(req, Ebook.class);
         if (ObjectUtils.isEmpty(ebook.getId())) {
+            // 自增，uuid，雪花
+            ebook.setId(snowFlake.nextId());
             ebookMapper.insert(ebook);
         } else {
             ebookMapper.updateByPrimaryKey(ebook);

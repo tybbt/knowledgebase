@@ -1,6 +1,9 @@
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+      <p>
+        <a-button type="primary" @click="add" size="large">新增</a-button>
+      </p>
       <a-table
           :columns="columns"
           :rowKey="record => record.id"
@@ -168,6 +171,11 @@
         ebook.value = record;
       };
 
+      const add = () => {
+        modelVisible.value = true;
+        ebook.value = {}
+      }
+
       onMounted(() => {
         handleQuery({
           page: 1,
@@ -185,7 +193,8 @@
         modelVisible,
         modelLoading,
         handleModelOK,
-        ebook
+        ebook,
+        add
       }
     }
   });
