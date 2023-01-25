@@ -16,7 +16,7 @@
         <template v-slot:action="{ text, record }">
           <span>
             <a-space size="small">
-              <a-button type="primary">编辑</a-button>
+              <a-button type="primary" @click="edit">编辑</a-button>
               <a-button type="primary" danger>删除</a-button>
             </a-space>
           </span>
@@ -24,6 +24,15 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+
+  <a-modal
+      title="Title"
+      v-model:visible="modelVisible"
+      :confirm-loading="modelLoading"
+      @ok="handleModelOK"
+  >
+    <p>test</p>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -106,8 +115,31 @@
         });
       };
 
+      /**
+       * 表单
+       */
+      const modelVisible = ref(false);
+      const modelLoading = ref(false);
+      const handleModelOK = () => {
+        modelLoading.value = true;
+        setTimeout(() => {
+          modelVisible.value = false;
+          modelLoading.value = false;
+        }, 2000);
+      };
+
+      /**
+       * 编辑页面
+       */
+      const edit = () => {
+        modelVisible.value = true;
+      };
+
       onMounted(() => {
-        handleQuery({});
+        handleQuery({
+          page: 1,
+          size: pagination.value.pageSize,
+        });
       });
 
       return {
@@ -115,7 +147,11 @@
         pagination,
         columns,
         loading,
-        handleTableChange
+        handleTableChange,
+        edit,
+        modelVisible,
+        modelLoading,
+        handleModelOK
       }
     }
   });
