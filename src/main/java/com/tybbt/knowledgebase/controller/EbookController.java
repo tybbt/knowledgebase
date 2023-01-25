@@ -1,10 +1,13 @@
 package com.tybbt.knowledgebase.controller;
 
-import com.tybbt.knowledgebase.req.EbookReq;
+import com.tybbt.knowledgebase.req.EbookQueryReq;
+import com.tybbt.knowledgebase.req.EbookSaveReq;
 import com.tybbt.knowledgebase.resp.CommonResp;
-import com.tybbt.knowledgebase.resp.EbookResp;
+import com.tybbt.knowledgebase.resp.EbookQueryResp;
 import com.tybbt.knowledgebase.service.EbookService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,10 +24,19 @@ public class EbookController {
 
     // 程序接口入口 -> 调用ebookService 的list方法
     @RequestMapping("/list")
-    public CommonResp list(EbookReq req){
-        CommonResp<List<EbookResp>> response = new CommonResp<>();
-        List<EbookResp> list = ebookService.list(req);
+    public CommonResp list(EbookQueryReq req){
+        CommonResp<List<EbookQueryResp>> response = new CommonResp<>();
+        List<EbookQueryResp> list = ebookService.list(req);
         response.setContent(list);
         return response;
+    }
+
+    @PostMapping("/save")
+    public CommonResp save(@RequestBody EbookSaveReq req){
+        // 前端如果使用POST提交中Content-Type为application/json方式，则需要RequestBody注解包裹request才能处理，axios使用json
+        // 如果利用application/x-www-form的方式提交则不需要加注解
+        CommonResp resp = new CommonResp<>();
+        ebookService.save(req);
+        return resp;
     }
 }

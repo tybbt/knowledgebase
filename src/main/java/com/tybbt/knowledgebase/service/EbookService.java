@@ -3,8 +3,9 @@ package com.tybbt.knowledgebase.service;
 import com.tybbt.knowledgebase.domain.Ebook;
 import com.tybbt.knowledgebase.domain.EbookExample;
 import com.tybbt.knowledgebase.mapper.EbookMapper;
-import com.tybbt.knowledgebase.req.EbookReq;
-import com.tybbt.knowledgebase.resp.EbookResp;
+import com.tybbt.knowledgebase.req.EbookQueryReq;
+import com.tybbt.knowledgebase.req.EbookSaveReq;
+import com.tybbt.knowledgebase.resp.EbookQueryResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
-    public List<EbookResp> list(EbookReq req){
+    public List<EbookQueryResp> list(EbookQueryReq req){
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
@@ -37,7 +38,17 @@ public class EbookService {
 //            respList.add(ebookResp);
 //        }
         // 列表复制
-        List<EbookResp> list = CopyUtil.copyList(ebookslist, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookslist, EbookQueryResp.class);
         return list;
+    }
+
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if (ObjectUtils.isEmpty(ebook.getId())) {
+            ebookMapper.insert(ebook);
+        } else {
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
+
     }
 }

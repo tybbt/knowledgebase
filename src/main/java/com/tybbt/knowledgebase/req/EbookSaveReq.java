@@ -1,6 +1,6 @@
-package com.tybbt.knowledgebase.resp;
+package com.tybbt.knowledgebase.req;
 
-public class EbookResp {
+public class EbookSaveReq {
     private Long id;
 
     private String name;

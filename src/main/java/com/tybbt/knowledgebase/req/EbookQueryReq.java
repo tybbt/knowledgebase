@@ -1,6 +1,6 @@
 package com.tybbt.knowledgebase.req;
 
-public class EbookReq {
+public class EbookQueryReq {
     private Long id;
 
     private String name;
