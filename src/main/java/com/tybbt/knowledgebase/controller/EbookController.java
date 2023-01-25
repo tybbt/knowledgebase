@@ -20,7 +20,7 @@ public class EbookController {
     private EbookService ebookService;
 
     // 程序接口入口 -> 调用ebookService 的list方法
-    @RequestMapping("/list")
+    @GetMapping("/list")
     public CommonResp list(EbookQueryReq req){
         CommonResp<List<EbookQueryResp>> response = new CommonResp<>();
         List<EbookQueryResp> list = ebookService.list(req);

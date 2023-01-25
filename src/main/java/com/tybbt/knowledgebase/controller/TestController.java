@@ -2,7 +2,7 @@ package com.tybbt.knowledgebase.controller;
 
 import com.tybbt.knowledgebase.domain.Test;
 import com.tybbt.knowledgebase.service.TestService;
-import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ public class TestController {
     @Value("${test.hello:TEST}")
     private String testHello;
 
-    @Resource
+    @Autowired
     private TestService testService;
     // http://127.0.0.1:8080/hello
     /**
