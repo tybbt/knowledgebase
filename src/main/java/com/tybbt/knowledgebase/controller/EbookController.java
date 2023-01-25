@@ -4,11 +4,10 @@ import com.tybbt.knowledgebase.req.EbookQueryReq;
 import com.tybbt.knowledgebase.req.EbookSaveReq;
 import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.resp.EbookQueryResp;
+import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.service.EbookService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 // 在外层类增加@RequestMapping注解，可以直接作为公共的上层链接，后续内部无论使用GET POST都可以作为请求的前缀
@@ -22,8 +21,8 @@ public class EbookController {
     // 程序接口入口 -> 调用ebookService 的list方法
     @GetMapping("/list")
     public CommonResp list(EbookQueryReq req){
-        CommonResp<List<EbookQueryResp>> response = new CommonResp<>();
-        List<EbookQueryResp> list = ebookService.list(req);
+        CommonResp<PageResp<EbookQueryResp>> response = new CommonResp<>();
+        PageResp<EbookQueryResp> list = ebookService.list(req);
         response.setContent(list);
         return response;
     }

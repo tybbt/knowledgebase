@@ -8,6 +8,7 @@ import com.tybbt.knowledgebase.mapper.EbookMapper;
 import com.tybbt.knowledgebase.req.EbookQueryReq;
 import com.tybbt.knowledgebase.req.EbookSaveReq;
 import com.tybbt.knowledgebase.resp.EbookQueryResp;
+import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
 import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
@@ -28,14 +29,14 @@ public class EbookService {
     @Resource
     private SnowFlake snowFlake;
 
-    public List<EbookQueryResp> list(EbookQueryReq req){
+    public PageResp<EbookQueryResp> list(EbookQueryReq req){
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        PageHelper.startPage(1,3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         // 调用EbookMapper的list方法
         List<Ebook> ebookslist = ebookMapper.selectByExample(ebookExample);
 
@@ -52,9 +53,16 @@ public class EbookService {
 //            EbookResp ebookResp = CopyUtil.copy(ebook, EbookResp.class);
 //            respList.add(ebookResp);
 //        }
+
         // 列表复制
         List<EbookQueryResp> list = CopyUtil.copyList(ebookslist, EbookQueryResp.class);
-        return list;
+
+        PageResp<EbookQueryResp> pageResp = new PageResp();
+
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
     }
 
     public void save(EbookSaveReq req) {
