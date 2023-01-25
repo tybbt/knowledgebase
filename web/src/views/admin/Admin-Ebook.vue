@@ -16,7 +16,7 @@
         <template v-slot:action="{ text, record }">
           <span>
             <a-space size="small">
-              <a-button type="primary" @click="edit">编辑</a-button>
+              <a-button type="primary" @click="edit(record)">编辑</a-button>
               <a-button type="primary" danger>删除</a-button>
             </a-space>
           </span>
@@ -31,7 +31,29 @@
       :confirm-loading="modelLoading"
       @ok="handleModelOK"
   >
-    <p>test</p>
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+
+      <a-form-item label="封面">
+        <a-input v-model:value="ebook.cover" />
+      </a-form-item>
+
+      <a-form-item label="名称">
+        <a-input v-model:value="ebook.name" />
+      </a-form-item>
+
+      <a-form-item label="分类一">
+        <a-input v-model:value="ebook.category1Id" />
+      </a-form-item>
+
+      <a-form-item label="分类二">
+        <a-input v-model:value="ebook.category2Id" />
+      </a-form-item>
+
+      <a-form-item label="描述">
+        <a-input v-model:value="ebook.description" type="textarea" />
+      </a-form-item>
+
+    </a-form>
   </a-modal>
 </template>
 
@@ -118,6 +140,7 @@
       /**
        * 表单
        */
+      const ebook = ref({});
       const modelVisible = ref(false);
       const modelLoading = ref(false);
       const handleModelOK = () => {
@@ -131,8 +154,9 @@
       /**
        * 编辑页面
        */
-      const edit = () => {
+      const edit = (record: any) => {
         modelVisible.value = true;
+        ebook.value = record;
       };
 
       onMounted(() => {
@@ -151,7 +175,8 @@
         edit,
         modelVisible,
         modelLoading,
-        handleModelOK
+        handleModelOK,
+        ebook
       }
     }
   });
