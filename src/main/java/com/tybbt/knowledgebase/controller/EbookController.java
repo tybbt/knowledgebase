@@ -30,7 +30,7 @@ public class EbookController {
     }
 
     @PostMapping("/save")
-    public CommonResp save(@RequestBody EbookSaveReq req){
+    public CommonResp save(@Valid @RequestBody EbookSaveReq req){
         // 前端如果使用POST提交中Content-Type为application/json方式，则需要RequestBody注解包裹request才能处理，axios使用json
         // 如果利用application/x-www-form的方式提交则不需要加注解
         CommonResp resp = new CommonResp<>();

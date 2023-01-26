@@ -166,16 +166,18 @@
       const handleModelOK = () => {
         modelLoading.value = true;
         axios.post("/ebook/save", ebook.value).then((response) => {
+          modelLoading.value = false;
           const data = response.data; // data = CommonResp
           if (data.success) {
             modelVisible.value = false;
-            modelLoading.value = false;
 
             //重新加载列表
             handleQuery({
               page: pagination.value.current,
               size: pagination.value.pageSize
             });
+          } else {
+            message.error(data.message);
           }
         });
       };
