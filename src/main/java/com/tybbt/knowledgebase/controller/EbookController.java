@@ -7,6 +7,7 @@ import com.tybbt.knowledgebase.resp.EbookQueryResp;
 import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.service.EbookService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
@@ -20,7 +21,7 @@ public class EbookController {
 
     // 程序接口入口 -> 调用ebookService 的list方法
     @GetMapping ("/list")
-    public CommonResp list(EbookQueryReq req){
+    public CommonResp list(@Valid EbookQueryReq req){
         // 前后端参数名称需一致，才能自动映射。
         CommonResp<PageResp<EbookQueryResp>> response = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.list(req);
