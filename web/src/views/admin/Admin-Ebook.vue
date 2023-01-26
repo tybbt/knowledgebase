@@ -1,9 +1,22 @@
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-      <p>
-        <a-button type="primary" @click="add" size="large">新增</a-button>
-      </p>
+      <a-space size="small">
+        <p>
+          <a-input-search
+              v-model:value="value"
+              placeholder="input search text"
+              enter-button="Search"
+              size="large"
+              style="width: 400px"
+              @search="onSearch"
+          />
+        </p>
+        <p>
+          <a-button type="primary" @click="add" size="large">新增</a-button>
+        </p>
+      </a-space>
+
       <a-table
           :columns="columns"
           :rowKey="record => record.id"
@@ -129,10 +142,7 @@
       const handleQuery = (params: any) => {
         loading.value = true;
         console.log(params)
-        axios.get("/ebook/list", {params: {
-            page: params.page,
-            size: params.size
-          }}).then((response) => {
+        axios.get("/ebook/list", {params: params}).then((response) => {
           loading.value = false;
           const data = response.data;
           if (data.success) {
@@ -182,6 +192,15 @@
         });
       };
 
+      const value = ref<string>();
+      const onSearch = (searchValue: string) => {
+        handleQuery({
+          page: pagination.value.current,
+          size: pagination.value.pageSize,
+          name: searchValue
+        });
+      };
+
       /**
        * 编辑页面
        */
@@ -228,7 +247,9 @@
         handleModelOK,
         ebook,
         add,
-        del
+        del,
+        value,
+        onSearch
       }
     }
   });
