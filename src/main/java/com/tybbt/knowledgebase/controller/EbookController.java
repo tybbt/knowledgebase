@@ -19,8 +19,9 @@ public class EbookController {
     private EbookService ebookService;
 
     // 程序接口入口 -> 调用ebookService 的list方法
-    @GetMapping("/list")
+    @GetMapping ("/list")
     public CommonResp list(EbookQueryReq req){
+        // 前后端参数名称需一致，才能自动映射。
         CommonResp<PageResp<EbookQueryResp>> response = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.list(req);
         response.setContent(list);

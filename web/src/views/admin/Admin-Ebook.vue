@@ -77,7 +77,7 @@
       const ebooks = ref();
       const pagination = ref({
         current: 1,
-        pageSize: 2,
+        pageSize: 3,
         total: 0
       });
 
@@ -127,12 +127,17 @@
        */
       const handleQuery = (params: any) => {
         loading.value = true;
-        axios.get("/ebook/list", params).then((response) => {
+        console.log(params)
+        axios.get("/ebook/list", {params: {
+            page: params.page,
+            size: params.size
+          }}).then((response) => {
           loading.value = false;
           const data = response.data;
-          ebooks.value = data.content;
+          ebooks.value = data.content.list;
 
           pagination.value.current = params.page;
+          pagination.value.total = data.content.total;
         });
       };
 
@@ -200,7 +205,7 @@
       onMounted(() => {
         handleQuery({
           page: 1,
-          size: pagination.value.pageSize,
+          size: pagination.value.pageSize
         });
       });
 
