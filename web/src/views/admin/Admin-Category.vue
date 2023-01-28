@@ -21,9 +21,8 @@
           :columns="columns"
           :rowKey="record => record.id"
           :data-source="categorys"
-          :pagination="pagination"
+          :pagination="false"
           :loading="loading"
-          @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" />
@@ -82,11 +81,6 @@
     name: 'AdminCategory',
     setup() {
       const categorys = ref();
-      const pagination = ref({
-        current: 1,
-        pageSize: 10,
-        total: 0
-      });
 
       const loading = ref(false);
 
@@ -117,31 +111,17 @@
        * 数据查询
        * @param params
        */
-      const handleQuery = (params: any) => {
+      const handleQuery = () => {
         loading.value = true;
-        console.log(params)
-        axios.get("/category/list", {params: params}).then((response) => {
+        axios.get("/category/all").then((response) => {
           loading.value = false;
           const data = response.data;
           if (data.success) {
-            categorys.value = data.content.list;
+            categorys.value = data.content;
 
-            pagination.value.current = params.page;
-            pagination.value.total = data.content.total;
           } else {
             message.error(data.message);
           }
-        });
-      };
-
-      /**
-       * 点击页码时触发
-       */
-      const handleTableChange = (pagination: any) => {
-        console.log("看看自带的分页参数：" + pagination);
-        handleQuery({
-          page: pagination.current,
-          size: pagination.pageSize
         });
       };
 
@@ -160,10 +140,7 @@
             modelVisible.value = false;
 
             //重新加载列表
-            handleQuery({
-              page: 1,
-              size: pagination.value.pageSize
-            });
+            handleQuery();
           } else {
             message.error(data.message);
           }
@@ -172,11 +149,8 @@
 
       const value = ref<string>();
       const onSearch = (searchValue: string) => {
-        handleQuery({
-          page: 1,
-          size: pagination.value.pageSize,
-          name: searchValue
-        });
+        console.log(searchValue)
+        handleQuery();
       };
 
       /**
@@ -198,27 +172,19 @@
           console.log(data)
           if (data.success) {
             //重新加载列表
-            handleQuery({
-              page: 1,
-              size: pagination.value.pageSize
-            });
+            handleQuery();
           }
         });
       };
 
       onMounted(() => {
-        handleQuery({
-          page: 1,
-          size: pagination.value.pageSize
-        });
+        handleQuery();
       });
 
       return {
         categorys,
-        pagination,
         columns,
         loading,
-        handleTableChange,
         edit,
         modelVisible,
         modelLoading,

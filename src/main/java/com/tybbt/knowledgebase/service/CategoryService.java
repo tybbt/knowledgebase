@@ -76,4 +76,16 @@ public class CategoryService {
     public void delete(Long id) {
         categoryMapper.deleteByPrimaryKey(id);
     }
+
+    public List<CategoryQueryResp> all(){
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
+        // 调用CategoryMapper的list方法
+        List<Category> categoryslist = categoryMapper.selectByExample(categoryExample);
+
+        // 列表复制
+        List<CategoryQueryResp> list = CopyUtil.copyList(categoryslist, CategoryQueryResp.class);
+
+        return list;
+    }
 }

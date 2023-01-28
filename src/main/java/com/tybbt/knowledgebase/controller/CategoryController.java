@@ -2,13 +2,15 @@ package com.tybbt.knowledgebase.controller;
 
 import com.tybbt.knowledgebase.req.CategoryQueryReq;
 import com.tybbt.knowledgebase.req.CategorySaveReq;
-import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.resp.CategoryQueryResp;
+import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.service.CategoryService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 // 在外层类增加@RequestMapping注解，可以直接作为公共的上层链接，后续内部无论使用GET POST都可以作为请求的前缀
@@ -25,6 +27,15 @@ public class CategoryController {
         // 前后端参数名称需一致，才能自动映射。
         CommonResp<PageResp<CategoryQueryResp>> response = new CommonResp<>();
         PageResp<CategoryQueryResp> list = categoryService.list(req);
+        response.setContent(list);
+        return response;
+    }
+
+    @GetMapping ("/all")
+    public CommonResp all(){
+        // 前后端参数名称需一致，才能自动映射。
+        CommonResp<List<CategoryQueryResp>> response = new CommonResp<>();
+        List<CategoryQueryResp> list = categoryService.all();
         response.setContent(list);
         return response;
     }
