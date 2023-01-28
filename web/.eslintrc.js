@@ -16,6 +16,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'cue/no-unused-components': 'off',
-    'vue/no-unused-vars': 0
+    'vue/no-unused-vars': 0,
   }
 }

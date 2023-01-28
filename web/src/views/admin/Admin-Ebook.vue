@@ -26,7 +26,7 @@
           @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
+          <img :src="cover.cover" alt="avatar" />
         </template>
         <template v-slot:category="{ text, record }">
           <span>
@@ -141,7 +141,7 @@
        */
       const handleQuery = (params: any) => {
         loading.value = true;
-        console.log(params)
+        // console.log(params)
         axios.get("/ebook/list", {params: params}).then((response) => {
           loading.value = false;
           const data = response.data;
@@ -180,7 +180,7 @@
         ebook.value.category2Id = categoryIds.value[1];
         axios.post("/ebook/save", ebook.value).then((response) => {
           modelLoading.value = false;
-          console.log("save ebook:", ebook);
+          // console.log("save ebook:", ebook);
           const data = response.data; // data = CommonResp
           if (data.success) {
             modelVisible.value = false;
@@ -213,8 +213,8 @@
         modelVisible.value = true;
         ebook.value = Tool.copy(record);
         categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
-        console.log("edit ebook:", ebook);
-        console.log("edit categoryid:", categoryIds);
+        // console.log("edit ebook:", ebook);
+        // console.log("edit categoryid:", categoryIds);
       };
 
       const add = () => {
@@ -225,7 +225,7 @@
       const del = (id: number) => {
         axios.delete("/ebook/delete/" + id).then((response) => {
           const data = response.data; // data = CommonResp
-          console.log(data)
+          // console.log(data)
           if (data.success) {
             //重新加载列表
             handleQuery({
@@ -254,28 +254,29 @@
           } else {
             message.error(data.message);
           }
+          handleQuery({
+            page: 1,
+            size: pagination.value.pageSize
+          });
         });
       };
 
       const getCategoryName = (cid: number) => {
-        console.log("search cid:", {'cid': cid})
+        // console.log("search cid:", {'cid': cid})
         let result = "";
         categorys.forEach((item: any) => {
-          console.log("compare with:", item)
+          // console.log("compare with:", item)
           if (item.id === cid.toString()) {
             result = item.name;
           }
         });
-        console.log("id name:", result)
+        // console.log("id name:", result)
         return result;
       };
 
       onMounted(() => {
         handleQueryCategory();
-        handleQuery({
-          page: 1,
-          size: pagination.value.pageSize
-        });
+
       });
 
       return {

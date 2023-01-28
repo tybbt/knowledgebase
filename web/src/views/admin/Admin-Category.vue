@@ -3,14 +3,7 @@
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <a-space size="small">
         <p>
-          <a-input-search
-              v-model:value="value"
-              placeholder="input search text"
-              enter-button="Search"
-              size="large"
-              style="width: 400px"
-              @search="onSearch"
-          />
+          <a-button type="primary" @click="handleQuery" size="large">刷新</a-button>
         </p>
         <p>
           <a-button type="primary" @click="add" size="large">新增</a-button>
@@ -151,7 +144,6 @@
           const data = response.data; // data = CommonResp
           if (data.success) {
             modelVisible.value = false;
-
             //重新加载列表
             handleQuery();
           } else {
@@ -206,7 +198,8 @@
         add,
         del,
         value,
-        onSearch
+        onSearch,
+        handleQuery
       }
     }
   });
