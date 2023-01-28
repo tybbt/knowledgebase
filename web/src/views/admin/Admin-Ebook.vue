@@ -28,7 +28,11 @@
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" />
         </template>
-
+        <template v-slot:category="{ text, record }">
+          <span>
+            {{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}
+          </span>
+        </template>
         <template v-slot:action="{ text, record }">
           <span>
             <a-space size="small">
@@ -109,13 +113,8 @@
           dataIndex: 'name'
         },
         {
-          title: '分类一',
-          key: 'category1Id',
-          dataIndex: 'category1Id',
-        },
-        {
-          title: '分类二',
-          dataIndex: 'category2Id'
+          title: '分类',
+          slots: { customRender: 'category' }
         },
         {
           title: '文档数',
@@ -177,10 +176,11 @@
       const modelLoading = ref(false);
       const handleModelOK = () => {
         modelLoading.value = true;
+        ebook.value.category1Id = categoryIds.value[0];
+        ebook.value.category2Id = categoryIds.value[1];
         axios.post("/ebook/save", ebook.value).then((response) => {
           modelLoading.value = false;
-          ebook.value.category1Id = categoryIds.value[0];
-          ebook.value.category2Id = categoryIds.value[1];
+          console.log("save ebook:", ebook);
           const data = response.data; // data = CommonResp
           if (data.success) {
             modelVisible.value = false;
@@ -213,6 +213,8 @@
         modelVisible.value = true;
         ebook.value = Tool.copy(record);
         categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
+        console.log("edit ebook:", ebook);
+        console.log("edit categoryid:", categoryIds);
       };
 
       const add = () => {
@@ -235,6 +237,7 @@
       };
 
       const level1 = ref();
+      let categorys: any;
       /**
        * 数据查询
        */
@@ -244,7 +247,7 @@
           loading.value = false;
           const data = response.data;
           if (data.success) {
-            const categorys = data.content;
+            categorys = data.content;
 
             level1.value = [];
             level1.value = Tool.array2Tree(categorys, 0);
@@ -252,6 +255,19 @@
             message.error(data.message);
           }
         });
+      };
+
+      const getCategoryName = (cid: number) => {
+        console.log("search cid:", {'cid': cid})
+        let result = "";
+        categorys.forEach((item: any) => {
+          console.log("compare with:", item)
+          if (item.id === cid.toString()) {
+            result = item.name;
+          }
+        });
+        console.log("id name:", result)
+        return result;
       };
 
       onMounted(() => {
@@ -278,7 +294,8 @@
         value,
         onSearch,
         categoryIds,
-        level1
+        level1,
+        getCategoryName
       }
     }
   });
