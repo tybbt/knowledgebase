@@ -20,7 +20,7 @@
       <a-table
           :columns="columns"
           :rowKey="record => record.id"
-          :data-source="categorys"
+          :data-source="level1"
           :pagination="false"
           :loading="loading"
       >
@@ -81,6 +81,7 @@
     name: 'AdminCategory',
     setup() {
       const categorys = ref();
+      const level1 = ref();
 
       const loading = ref(false);
 
@@ -109,7 +110,6 @@
 
       /**
        * 数据查询
-       * @param params
        */
       const handleQuery = () => {
         loading.value = true;
@@ -119,6 +119,8 @@
           if (data.success) {
             categorys.value = data.content;
 
+            level1.value = [];
+            level1.value = Tool.array2Tree(categorys.value, 0);
           } else {
             message.error(data.message);
           }
@@ -182,7 +184,7 @@
       });
 
       return {
-        categorys,
+        level1,
         columns,
         loading,
         edit,
