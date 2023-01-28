@@ -4,11 +4,10 @@
       <a-menu
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
+          @click="onClick"
       >
         <a-menu-item key="welcome">
-          <router-link to="/">
-            <MailOutlined />
-          </router-link>
+          <MailOutlined />
           <span>欢迎</span>
         </a-menu-item>
 
@@ -19,7 +18,7 @@
                 {{item.name}}
               </span>
           </template>
-          <a-menu-item v-for="child in item.children" :key="child.id" @click="onClick">
+          <a-menu-item v-for="child in item.children" :key="child.id">
             <span>
               <DropboxOutlined />
               {{child.name}}
@@ -27,10 +26,19 @@
           </a-menu-item>
         </a-sub-menu>
 
+        <a-menu-item key="about">
+          <router-link to="/about">
+            <MailOutlined />
+            <span>关于我们</span>
+          </router-link>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-      <a-list item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -76,6 +84,8 @@
     name: 'Home',
     setup() {
       console.log("set up");
+      const isShowWelcome = ref(true);
+
       const level1 = ref();
       const ebooks = ref();
       // const ebook_re = reactive({books: []});
@@ -97,8 +107,9 @@
         });
       };
 
-      const onClick = () => {
-        console.log("menu click");
+      const onClick = (value) => {
+        isShowWelcome.value = value.key === 'welcome';
+        console.log("menu click", value);
       };
 
       // 控制生命周期函数
@@ -133,7 +144,8 @@
         ],
         handleQueryCategory,
         onClick,
-        level1
+        level1,
+        isShowWelcome
       };
     }
   });
