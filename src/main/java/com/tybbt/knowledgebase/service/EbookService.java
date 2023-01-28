@@ -33,9 +33,15 @@ public class EbookService {
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
+
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+
+        if (!ObjectUtils.isEmpty(req.getCategoryId2())) {
+            criteria.andCategory2IdEqualTo(req.getCategoryId2());
+        }
+
         PageHelper.startPage(req.getPage(), req.getSize());
         // 调用EbookMapper的list方法
         List<Ebook> ebookslist = ebookMapper.selectByExample(ebookExample);

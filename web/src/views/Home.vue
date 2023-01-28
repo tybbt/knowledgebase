@@ -5,9 +5,10 @@
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
           @click="onClick"
+          @openChange="showFullEbooks"
       >
         <a-menu-item key="welcome">
-          <MailOutlined />
+          <DingtalkOutlined />
           <span>欢迎</span>
         </a-menu-item>
 
@@ -90,6 +91,20 @@
       const ebooks = ref();
       // const ebook_re = reactive({books: []});
 
+      const handleQueryEbook = (params) => {
+        axios.get("/ebook/list", {
+          params: {
+            page: params.page,
+            size: params.size,
+            categoryId2: params.categoryId2
+          }
+        }).then((response) => {
+          const data = response.data;
+          ebooks.value = data.content.list;
+          // ebook_re.books = data.content;
+        });
+      };
+
       /**
        * 数据查询
        */
@@ -104,28 +119,43 @@
           } else {
             message.error(data.message);
           }
+
+          handleQueryEbook({
+            page: 1,
+            size: 1000
+          })
         });
       };
+      let categoryId2 = 0;
 
       const onClick = (value) => {
-        isShowWelcome.value = value.key === 'welcome';
-        console.log("menu click", value);
+        if (value.key === "welcome") {
+          isShowWelcome.value = true;
+        } else {
+          isShowWelcome.value = false;
+          categoryId2 = value.key;
+        }
+        // console.log("menu click", value);
+        handleQueryEbook({
+          page: 1,
+          size: 1000,
+          categoryId2: categoryId2
+        })
       };
+
+      const showFullEbooks = () => {
+        isShowWelcome.value = false;
+        handleQueryEbook({
+          page: 1,
+          size: 1000
+        })
+      }
 
       // 控制生命周期函数
       onMounted(() => {
         console.log("onMounted");
         handleQueryCategory();
-        axios.get("/ebook/list", {
-          params: {
-            page: 1,
-            size: 50
-          }
-        }).then((response) => {
-          const data = response.data;
-          ebooks.value = data.content.list;
-          // ebook_re.books = data.content;
-        });
+
       });
 
       return {
@@ -144,6 +174,7 @@
         ],
         handleQueryCategory,
         onClick,
+        showFullEbooks,
         level1,
         isShowWelcome
       };
