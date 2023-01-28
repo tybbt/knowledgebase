@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 public class EbookQueryResp {
+    // 该标注为解决雪花算法生成id过长导致json传输转换过程中丢失精度问题
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
