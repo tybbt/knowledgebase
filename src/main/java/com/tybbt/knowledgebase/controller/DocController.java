@@ -2,15 +2,17 @@ package com.tybbt.knowledgebase.controller;
 
 import com.tybbt.knowledgebase.req.DocQueryReq;
 import com.tybbt.knowledgebase.req.DocSaveReq;
-import com.tybbt.knowledgebase.resp.DocQueryResp;
 import com.tybbt.knowledgebase.resp.CommonResp;
+import com.tybbt.knowledgebase.resp.DocQueryResp;
 import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.service.DocService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 // 在外层类增加@RequestMapping注解，可以直接作为公共的上层链接，后续内部无论使用GET POST都可以作为请求的前缀
@@ -49,11 +51,12 @@ public class DocController {
         return resp;
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id) {
+    @DeleteMapping("/delete/{ids}")
+    public CommonResp delete(@PathVariable String ids) {
         // delete 一般根据id删除，所以需要在接口中明确需要删除的id，这个id通过PathVariable映射给id参数
         CommonResp resp = new CommonResp<>();
-        docService.delete(id);
+        List<Long> list = Arrays.asList(ids.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        docService.delete(list);
         return resp;
     }
 }
