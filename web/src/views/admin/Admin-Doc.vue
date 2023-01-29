@@ -51,20 +51,24 @@
       <a-form-item label="名称">
         <a-input v-model:value="doc.name" />
       </a-form-item>
-
       <a-form-item label="父文档">
-        <a-input v-model:value="doc.parent"/>
-        <a-select
-            ref="select"
+        <a-tree-select
             v-model:value="doc.parent"
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            :tree-data="treeSelectData"
+            placeholder="Please select"
+            tree-default-expand-all
+            :replaceFields="{
+              title: 'name',
+              key: 'id',
+              value: 'id'
+            }"
         >
-          <a-select-option value="0">
-            无
-          </a-select-option>
-          <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">
-            {{c.name}}
-          </a-select-option>
-        </a-select>
+          <template #title="{ key, value }">
+            <span style="color: #08c" v-if="value === doc.id">Child Node1 {{ value }}</span>
+          </template>
+        </a-tree-select>
       </a-form-item>
 
       <a-form-item label="顺序">
@@ -86,6 +90,8 @@
     setup() {
       const docs = ref();
       const level1 = ref();
+      const treeSelectData = ref();
+      treeSelectData.value = [];
 
       const loading = ref(false);
 
@@ -158,17 +164,54 @@
         handleQuery();
       };
 
+      const setDisable = (treeSelectData: any, id: any) => {
+        // console.log(treeSelectData, id);
+        // 遍历数组，即遍历某一层节点
+        for (let i = 0; i < treeSelectData.length; i++) {
+          const node = treeSelectData[i];
+          if (node.id === id) {
+            // 如果当前节点就是目标节点
+            console.log("disabled", node);
+            // 将目标节点设置为disabled
+            node.disabled = true;
+
+            // 遍历所有子节点，将所有子节点全部都加上disabled
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              for (let j = 0; j < children.length; j++) {
+                setDisable(children, children[j].id)
+              }
+            }
+          } else {
+            // 如果当前节点不是目标节点，则到其子节点再找找看。
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              setDisable(children, id);
+            }
+          }
+        }
+      };
+
       /**
        * 编辑页面
        */
       const edit = (record: any) => {
-        modelVisible.value = true;
         doc.value = Tool.copy(record);
+
+        treeSelectData.value = Tool.copy(level1.value);
+        setDisable(treeSelectData.value, record.id);
+
+        treeSelectData.value.unshift({id: 0, name: '无'});
+        console.log('treeSelectData:', treeSelectData);
+        modelVisible.value = true;
       };
 
       const add = () => {
         modelVisible.value = true;
         doc.value = {}
+
+        treeSelectData.value = Tool.copy(level1.value);
+        treeSelectData.value.unshift({id:0, name: '无'});
       };
 
       const del = (id: number) => {
@@ -181,6 +224,8 @@
           }
         });
       };
+
+
 
       onMounted(() => {
         handleQuery();
@@ -199,7 +244,8 @@
         del,
         value,
         onSearch,
-        handleQuery
+        handleQuery,
+        treeSelectData
       }
     }
   });
