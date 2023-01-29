@@ -84,10 +84,12 @@
   import axios from 'axios';
   import {message} from "ant-design-vue";
   import {Tool} from "@/util/tool";
+  import {useRoute} from "vue-router";
 
   export default defineComponent({
     name: 'AdminDoc',
     setup() {
+      const route = useRoute();
       const docs = ref();
       const level1 = ref();
       const treeSelectData = ref();
@@ -208,7 +210,9 @@
 
       const add = () => {
         modelVisible.value = true;
-        doc.value = {}
+        doc.value = {
+          ebookId: route.query.ebookId
+        }
 
         treeSelectData.value = Tool.copy(level1.value);
         treeSelectData.value.unshift({id:0, name: '无'});
