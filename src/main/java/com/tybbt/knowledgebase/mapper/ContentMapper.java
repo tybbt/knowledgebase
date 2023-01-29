@@ -2,8 +2,9 @@ package com.tybbt.knowledgebase.mapper;
 
 import com.tybbt.knowledgebase.domain.Content;
 import com.tybbt.knowledgebase.domain.ContentExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ContentMapper {
     long countByExample(ContentExample example);

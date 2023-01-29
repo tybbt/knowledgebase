@@ -1,27 +1,29 @@
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-      <a-space size="small">
-        <p>
-          <a-button type="primary" @click="handleQuery" size="large">刷新</a-button>
-        </p>
-        <p>
-          <a-button type="primary" @click="add" size="large">新增</a-button>
-        </p>
-      </a-space>
+      <a-row>
+        <a-col :span="8">
+          <a-space size="small">
+            <p>
+              <a-button type="primary" @click="handleQuery" size="large">刷新</a-button>
+            </p>
+            <p>
+              <a-button type="primary" @click="add" size="large">新增</a-button>
+            </p>
+          </a-space>
 
-      <a-table
-          :columns="columns"
-          :rowKey="record => record.id"
-          :data-source="level1"
-          :pagination="false"
-          :loading="loading"
-      >
-        <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
-        </template>
+          <a-table
+              :columns="columns"
+              :rowKey="record => record.id"
+              :data-source="level1"
+              :pagination="false"
+              :loading="loading"
+          >
+            <template #cover="{ text: cover }">
+              <img v-if="cover" :src="cover" alt="avatar" />
+            </template>
 
-        <template v-slot:action="{ text, record }">
+            <template v-slot:action="{ text, record }">
           <span>
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">编辑</a-button>
@@ -35,50 +37,58 @@
               </a-popconfirm>
             </a-space>
           </span>
-        </template>
-      </a-table>
+            </template>
+          </a-table>
+        </a-col>
 
-    </a-layout-content>
-  </a-layout>
+        <a-col :span="16">
+          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
 
-  <a-modal
-      title="文档"
-      v-model:visible="modelVisible"
-      :confirm-loading="modelLoading"
-      @ok="handleModelOK"
-  >
-    <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name" />
-      </a-form-item>
-      <a-form-item label="父文档">
-        <a-tree-select
-            v-model:value="doc.parent"
-            style="width: 100%"
-            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-            :tree-data="treeSelectData"
-            placeholder="Please select"
-            tree-default-expand-all
-            :replaceFields="{
+            <a-form-item label="名称">
+              <a-input v-model:value="doc.name" />
+            </a-form-item>
+            <a-form-item label="父文档">
+              <a-tree-select
+                  v-model:value="doc.parent"
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  :tree-data="treeSelectData"
+                  placeholder="Please select"
+                  tree-default-expand-all
+                  :replaceFields="{
               title: 'name',
               key: 'id',
               value: 'id'
             }"
-        >
-        </a-tree-select>
-      </a-form-item>
+              >
+              </a-tree-select>
+            </a-form-item>
 
-      <a-form-item label="顺序">
-        <a-input v-model:value="doc.sort" />
-      </a-form-item>
+            <a-form-item label="顺序">
+              <a-input v-model:value="doc.sort" />
+            </a-form-item>
 
-      <a-form-item label="内容">
-        <div id="content"></div>
-      </a-form-item>
+            <a-form-item label="内容">
+              <div id="content"></div>
+            </a-form-item>
 
-    </a-form>
-  </a-modal>
+          </a-form>
+        </a-col>
+      </a-row>
+
+
+
+    </a-layout-content>
+  </a-layout>
+
+<!--  <a-modal-->
+<!--      title="文档"-->
+<!--      v-model:visible="modelVisible"-->
+<!--      :confirm-loading="modelLoading"-->
+<!--      @ok="handleModelOK"-->
+<!--  >-->
+<!--    -->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
