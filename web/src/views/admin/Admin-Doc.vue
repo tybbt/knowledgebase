@@ -13,31 +13,33 @@
           </a-space>
 
           <a-table
+              v-if="level1.length > 0"
               :columns="columns"
               :rowKey="record => record.id"
               :data-source="level1"
               :pagination="false"
               :loading="loading"
               size="small"
+              :defaultExpandAllRows="true"
           >
             <template #name="{ text, record }">
              {{record.sort}}  {{text}}
             </template>
 
             <template v-slot:action="{ text, record }">
-          <span>
-            <a-space size="small">
-              <a-button type="primary" @click="edit(record)" size="small">编辑</a-button>
-              <a-popconfirm
-                  title="删除后不可恢复，确认删除？"
-                  ok-text="是"
-                  cancel-text="否"
-                  @confirm="del(record.id)"
-              >
-                <a-button type="primary" size="small" danger >删除</a-button>
-              </a-popconfirm>
-            </a-space>
-          </span>
+              <span>
+                <a-space size="small">
+                  <a-button type="primary" @click="edit(record)" size="small">编辑</a-button>
+                  <a-popconfirm
+                      title="删除后不可恢复，确认删除？"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="del(record.id)"
+                  >
+                    <a-button type="primary" size="small" danger >删除</a-button>
+                  </a-popconfirm>
+                </a-space>
+              </span>
             </template>
           </a-table>
         </a-col>
@@ -114,11 +116,12 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
     name: 'AdminDoc',
     setup() {
       const editor = new E('#content');
-
+      editor.config.zIndex=0;
 
       const route = useRoute();
       const docs = ref();
       const level1 = ref();
+      level1.value = []
       const treeSelectData = ref();
       treeSelectData.value = [];
 
@@ -163,6 +166,7 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
        * 表单
        */
       const doc = ref({});
+      const param = ref();
       const modelVisible = ref(false);
       const modelLoading = ref(false);
       const handleSave = () => {
@@ -246,13 +250,14 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
         }
       };
 
-      let isCreated = false;
-      const createEditor = () => {
-        setTimeout(function (){
-          editor.create();
-          editor.config.zIndex = 0;
-        }, 100);
-      }
+      // 在弹窗框使用时的懒加载
+      // let isCreated = false;
+      // const createEditor = () => {
+      //   setTimeout(function (){
+      //     editor.create();
+      //     editor.config.zIndex = 0;
+      //   }, 100);
+      // }
       /**
        * 编辑页面
        */
@@ -265,10 +270,10 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
 
         treeSelectData.value.unshift({id: 0, name: '无'});
         console.log('treeSelectData:', treeSelectData);
-        if (!isCreated) {
-          createEditor();
-          isCreated = true;
-        }
+        // if (!isCreated) {
+        //   createEditor();
+        //   isCreated = true;
+        // }
 
       };
 
@@ -280,10 +285,10 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
 
         treeSelectData.value = Tool.copy(level1.value);
         treeSelectData.value.unshift({id:0, name: '无'});
-        if (!isCreated) {
-          createEditor();
-          isCreated = true;
-        }
+        // if (!isCreated) {
+        //   createEditor();
+        //   isCreated = true;
+        // }
 
       };
 
@@ -319,6 +324,8 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
 
       onMounted(() => {
         handleQuery();
+        editor.create();
+
       });
 
       return {
@@ -335,7 +342,8 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
         value,
         onSearch,
         handleQuery,
-        treeSelectData
+        treeSelectData,
+        param
       }
     }
   });
