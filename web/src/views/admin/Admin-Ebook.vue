@@ -37,6 +37,9 @@
           <span>
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">编辑</a-button>
+              <router-link to="/admin/doc">
+                <a-button type="primary">文档管理</a-button>
+              </router-link>
               <a-popconfirm
                   title="删除后不可恢复，确认删除？"
                   ok-text="是"
