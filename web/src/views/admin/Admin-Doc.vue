@@ -1,7 +1,7 @@
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-      <a-row>
+      <a-row :gutter="24">
         <a-col :span="8">
           <a-space size="small">
             <p>
@@ -18,22 +18,23 @@
               :data-source="level1"
               :pagination="false"
               :loading="loading"
+              size="small"
           >
-            <template #cover="{ text: cover }">
-              <img v-if="cover" :src="cover" alt="avatar" />
+            <template #name="{ text, record }">
+             {{record.sort}}  {{text}}
             </template>
 
             <template v-slot:action="{ text, record }">
           <span>
             <a-space size="small">
-              <a-button type="primary" @click="edit(record)">编辑</a-button>
+              <a-button type="primary" @click="edit(record)" size="small">编辑</a-button>
               <a-popconfirm
                   title="删除后不可恢复，确认删除？"
                   ok-text="是"
                   cancel-text="否"
                   @confirm="del(record.id)"
               >
-                <a-button type="primary" danger>删除</a-button>
+                <a-button type="primary" size="small" danger >删除</a-button>
               </a-popconfirm>
             </a-space>
           </span>
@@ -42,7 +43,16 @@
         </a-col>
 
         <a-col :span="16">
-          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+          <p>
+            <a-form layout="inline" :model="param">
+              <a-form-item>
+                <a-button type="primary" @click="handleSave">
+                  保存
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </p>
+          <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }" layout="vertical">
 
             <a-form-item label="名称">
               <a-input v-model:value="doc.name" />
@@ -103,9 +113,8 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
   export default defineComponent({
     name: 'AdminDoc',
     setup() {
-      console.log("init editor.")
       const editor = new E('#content');
-      console.log("init.")
+
 
       const route = useRoute();
       const docs = ref();
@@ -119,17 +128,8 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
 
         {
           title: '名称',
-          dataIndex: 'name'
-        },
-        {
-          title: '顺序',
-          key: 'sort',
-          dataIndex: 'sort',
-        },
-        {
-          title: '父文档',
-          key: 'parent',
-          dataIndex: 'parent',
+          dataIndex: 'name',
+          slots: { customRender: 'name' }
         },
         {
           title: 'Action',
@@ -165,7 +165,7 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       const doc = ref({});
       const modelVisible = ref(false);
       const modelLoading = ref(false);
-      const handleModelOK = () => {
+      const handleSave = () => {
         modelLoading.value = true;
         axios.post("/doc/save", doc.value).then((response) => {
           modelLoading.value = false;
@@ -250,6 +250,7 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       const createEditor = () => {
         setTimeout(function (){
           editor.create();
+          editor.config.zIndex = 0;
         }, 100);
       }
       /**
@@ -327,7 +328,7 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
         edit,
         modelVisible,
         modelLoading,
-        handleModelOK,
+        handleSave,
         doc,
         add,
         del,
