@@ -37,6 +37,7 @@
           </span>
         </template>
       </a-table>
+
     </a-layout-content>
   </a-layout>
 
@@ -65,9 +66,6 @@
               value: 'id'
             }"
         >
-          <template #title="{ key, value }">
-            <span style="color: #08c" v-if="value === doc.id">Child Node1 {{ value }}</span>
-          </template>
         </a-tree-select>
       </a-form-item>
 
@@ -75,20 +73,30 @@
         <a-input v-model:value="doc.sort" />
       </a-form-item>
 
+      <a-form-item label="内容">
+        <div id="content"></div>
+      </a-form-item>
+
     </a-form>
   </a-modal>
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
+import {createVNode, defineComponent, onMounted, ref} from 'vue';
   import axios from 'axios';
-  import {message} from "ant-design-vue";
+  import {message, Modal} from "ant-design-vue";
   import {Tool} from "@/util/tool";
   import {useRoute} from "vue-router";
+  import {ExclamationCircleOutlined} from "@ant-design/icons-vue";
+  import E from 'wangeditor';
 
   export default defineComponent({
     name: 'AdminDoc',
     setup() {
+      console.log("init editor.")
+      const editor = new E('#content');
+      console.log("init.")
+
       const route = useRoute();
       const docs = ref();
       const level1 = ref();
@@ -199,7 +207,7 @@
       };
 
 
-      const ids: Array<string> = [];
+      let ids: Array<string> = [];
       const getDeleteIds = (treeSelectData: any, id: any) => {
         // console.log(treeSelectData, id);
         // 遍历数组，即遍历某一层节点
@@ -228,11 +236,17 @@
         }
       };
 
-
+      let isCreated = false;
+      const createEditor = () => {
+        setTimeout(function (){
+          editor.create();
+        }, 100);
+      }
       /**
        * 编辑页面
        */
       const edit = (record: any) => {
+        modelVisible.value = true;
         doc.value = Tool.copy(record);
 
         treeSelectData.value = Tool.copy(level1.value);
@@ -240,9 +254,12 @@
 
         treeSelectData.value.unshift({id: 0, name: '无'});
         console.log('treeSelectData:', treeSelectData);
-        modelVisible.value = true;
-      };
+        if (!isCreated) {
+          createEditor();
+          isCreated = true;
+        }
 
+      };
 
       const add = () => {
         modelVisible.value = true;
@@ -252,21 +269,41 @@
 
         treeSelectData.value = Tool.copy(level1.value);
         treeSelectData.value.unshift({id:0, name: '无'});
+        if (!isCreated) {
+          createEditor();
+          isCreated = true;
+        }
+
       };
 
 
       const del = (id: number) => {
+        ids = [];
         getDeleteIds(level1.value, id);
-        axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
-          const data = response.data; // data = CommonResp
-          console.log(data)
-          if (data.success) {
-            //重新加载列表
-            handleQuery();
-          }
+        Modal.confirm({
+          title: () => 'Are you sure delete this category?',
+          icon: () => createVNode(ExclamationCircleOutlined),
+          content: () => '该操作将删除【'+ ids.join(",") +'】且不可恢复，是否确认删除？',
+          okText: () => '是',
+          okType: 'danger',
+          cancelText: () => '否',
+          onOk() {
+            console.log('OK');
+            axios.delete("/doc/delete/" + ids.join(",")).then((response) => {
+              const data = response.data; // data = CommonResp
+              console.log(data)
+              if (data.success) {
+                //重新加载列表
+                handleQuery();
+              }
+            });
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
         });
-      };
 
+      };
 
 
       onMounted(() => {
