@@ -17,5 +17,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'cue/no-unused-components': 'off',
     'vue/no-unused-vars': 0,
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   }
 }

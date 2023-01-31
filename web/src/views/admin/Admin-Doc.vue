@@ -165,12 +165,14 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       /**
        * 表单
        */
-      const doc = ref({});
+      const doc = ref();
+      doc.value = {};
       const param = ref();
       const modelVisible = ref(false);
       const modelLoading = ref(false);
       const handleSave = () => {
         modelLoading.value = true;
+        doc.value.content = editor.txt.html();
         axios.post("/doc/save", doc.value).then((response) => {
           modelLoading.value = false;
           const data = response.data; // data = CommonResp

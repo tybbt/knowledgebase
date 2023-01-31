@@ -2,8 +2,10 @@ package com.tybbt.knowledgebase.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.tybbt.knowledgebase.domain.Content;
 import com.tybbt.knowledgebase.domain.Doc;
 import com.tybbt.knowledgebase.domain.DocExample;
+import com.tybbt.knowledgebase.mapper.ContentMapper;
 import com.tybbt.knowledgebase.mapper.DocMapper;
 import com.tybbt.knowledgebase.req.DocQueryReq;
 import com.tybbt.knowledgebase.req.DocSaveReq;
@@ -28,6 +30,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     public PageResp<DocQueryResp> list(DocQueryReq req){
 
@@ -64,12 +69,22 @@ public class DocService {
 
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content content = CopyUtil.copy(req, Content.class);
         if (ObjectUtils.isEmpty(doc.getId())) {
             // 自增，uuid，雪花
-            doc.setId(snowFlake.nextId());
+            long newId = snowFlake.nextId();
+            doc.setId(newId);
             docMapper.insert(doc);
+
+            content.setId(newId);
+            contentMapper.insert(content);
+
         } else {
             docMapper.updateByPrimaryKey(doc);
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(content);
+            if (count == 0) {
+                contentMapper.insert(content);
+            }
         }
     }
 
