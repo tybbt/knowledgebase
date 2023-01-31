@@ -204,7 +204,7 @@
        * 表单
        */
       const doc = ref();
-      doc.value = {};
+      doc.value = { ebookId: route.query.ebookId };
       const param = ref();
       const handleSave = () => {
         doc.value.content = editor.txt.html();
@@ -220,7 +220,7 @@
               treeSelectData.value.unshift({id: 0, name: '无'});
             }, 100);
             editor.txt.html("");
-            doc.value = {};
+            doc.value = { ebookId: route.query.ebookId };
           } else {
             message.error(data.message);
           }
@@ -233,9 +233,6 @@
         console.log(searchValue)
         handleQuery();
       };
-
-
-
 
 
       let ids: Array<string> = [];
