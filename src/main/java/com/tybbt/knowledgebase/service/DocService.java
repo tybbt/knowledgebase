@@ -103,9 +103,11 @@ public class DocService {
         return content.getContent();
     }
 
-    public List<DocQueryResp> all(){
+    public List<DocQueryResp> all(long ebookId){
         DocExample docExample = new DocExample();
+        docExample.createCriteria().andEbookIdEqualTo(ebookId);
         docExample.setOrderByClause("sort asc");
+
         // 调用DocMapper的list方法
         List<Doc> docslist = docMapper.selectByExample(docExample);
 

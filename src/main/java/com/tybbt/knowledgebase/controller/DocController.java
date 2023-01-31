@@ -33,11 +33,11 @@ public class DocController {
         return response;
     }
 
-    @GetMapping ("/all")
-    public CommonResp all(){
+    @GetMapping ("/all/{ebookId}")
+    public CommonResp all(@PathVariable long ebookId){
         // 前后端参数名称需一致，才能自动映射。
         CommonResp<List<DocQueryResp>> response = new CommonResp<>();
-        List<DocQueryResp> list = docService.all();
+        List<DocQueryResp> list = docService.all(ebookId);
         response.setContent(list);
         return response;
     }

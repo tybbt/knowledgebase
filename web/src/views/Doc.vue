@@ -29,7 +29,7 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from 'axios';
 import {Tool} from "@/util/tool";
-// import {useRoute} from "vue-router";
+import {useRoute} from "vue-router";
 import E from 'wangeditor';
 import {message} from "ant-design-vue";
 
@@ -39,19 +39,17 @@ export default defineComponent({
     const editor = new E('#content');
     editor.config.zIndex=0;
 
-    // const route = useRoute();
+    const route = useRoute();
     const docs = ref();
 
     const level1 = ref();
     level1.value = []
 
-
-    // let ebookId = route.query.ebookId
     /**
      * 数据查询
      */
     const handleQuery = () => {
-      axios.get("/doc/all").then((response) => {
+      axios.get("/doc/all/" + route.query.ebookId).then((response) => {
         const data = response.data;
         if (data.success) {
           docs.value = data.content;
