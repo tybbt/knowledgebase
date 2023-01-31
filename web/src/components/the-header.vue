@@ -1,11 +1,19 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
+    <div class="logo">
+    </div>
     <a-menu
         theme="dark"
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
     >
+      <a-menu-item>
+        <a-space size="small">
+          <img src="/image/KBlogo.png" alt="logo" />
+          知识库
+        </a-space>
+      </a-menu-item>
+
       <a-menu-item key="/">
         <router-link to="/">
           首页
@@ -18,10 +26,10 @@
         </router-link>
 
       </a-menu-item><a-menu-item key="/admin/category">
-        <router-link to="/admin/category">
-          分类管理
-        </router-link>
-      </a-menu-item>
+      <router-link to="/admin/category">
+        分类管理
+      </router-link>
+    </a-menu-item>
 
       <a-menu-item key="/about">
         <router-link to="/about">
