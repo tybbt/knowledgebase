@@ -155,38 +155,12 @@
 
             level1.value = [];
             level1.value = Tool.array2Tree(docs.value, 0);
+
+
           } else {
             message.error(data.message);
           }
         });
-      };
-
-
-      /**
-       * 表单
-       */
-      const doc = ref();
-      doc.value = {};
-      const param = ref();
-      const handleSave = () => {
-        doc.value.content = editor.txt.html();
-        axios.post("/doc/save", doc.value).then((response) => {
-          const data = response.data; // data = CommonResp
-          if (data.success) {
-            message.success("保存成功！");
-            //重新加载列表
-            handleQuery();
-          } else {
-            message.error(data.message);
-          }
-        });
-      };
-
-
-      const value = ref<string>();
-      const onSearch = (searchValue: string) => {
-        console.log(searchValue)
-        handleQuery();
       };
 
 
@@ -197,7 +171,6 @@
           const node = treeSelectData[i];
           if (node.id === id) {
             // 如果当前节点就是目标节点
-            console.log("disabled", node);
             // 将目标节点设置为disabled
             node.disabled = true;
 
@@ -218,6 +191,43 @@
         }
       };
 
+      /**
+       * 表单
+       */
+      const doc = ref();
+      doc.value = {};
+      const param = ref();
+      const handleSave = () => {
+        doc.value.content = editor.txt.html();
+        axios.post("/doc/save", doc.value).then((response) => {
+          const data = response.data; // data = CommonResp
+          if (data.success) {
+            message.success("保存成功！");
+            //重新加载列表
+            handleQuery();
+            setTimeout(function () {
+              treeSelectData.value = Tool.copy(level1.value);
+              setDisable(treeSelectData.value, doc.value.id);
+              treeSelectData.value.unshift({id: 0, name: '无'});
+            }, 100);
+            editor.txt.html("");
+            doc.value = {};
+          } else {
+            message.error(data.message);
+          }
+        });
+      };
+
+
+      const value = ref<string>();
+      const onSearch = (searchValue: string) => {
+        console.log(searchValue)
+        handleQuery();
+      };
+
+
+
+
 
       let ids: Array<string> = [];
       const getDeleteIds = (treeSelectData: any, id: any) => {
@@ -227,7 +237,6 @@
           const node = treeSelectData[i];
           if (node.id === id) {
             // 如果当前节点就是目标节点
-            console.log("disabled", node);
             // 将目标节点设置为disabled
             ids.push(id);
 
@@ -272,6 +281,7 @@
       }
 
       const edit = (record: any) => {
+        console.log("edit:", record);
         editor.txt.html("");
         doc.value = Tool.copy(record);
         handleQueryContent();
@@ -296,6 +306,9 @@
         }
 
         treeSelectData.value = Tool.copy(level1.value);
+        if (Tool.isEmpty(treeSelectData.value)) {
+          treeSelectData.value = [];
+        }
         treeSelectData.value.unshift({id:0, name: '无'});
         // if (!isCreated) {
         //   createEditor();
@@ -337,6 +350,9 @@
       onMounted(() => {
         handleQuery();
         editor.create();
+        setTimeout(function (){
+          add();
+        }, 100);
 
       });
 
