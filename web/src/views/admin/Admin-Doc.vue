@@ -80,6 +80,12 @@
               <a-input v-model:value="doc.sort" />
             </a-form-item>
 
+            <a-form-item>
+              <a-button type="primary" @click="handlePreviewContent">
+                <EyeOutlined /> 内容预览
+              </a-button>
+            </a-form-item>
+
             <a-form-item label="内容">
               <div id="content"></div>
             </a-form-item>
@@ -88,7 +94,9 @@
         </a-col>
       </a-row>
 
-
+      <a-drawer width="900" placement="right" :closable="false" :visible="drawerVisible" @close="onDrawerClose">
+        <div class="wangeditor" :innerHTML="previewHTML"></div>
+      </a-drawer>
 
     </a-layout-content>
   </a-layout>
@@ -347,6 +355,17 @@
 
       };
 
+      const drawerVisible = ref(false);
+      const previewHTML = ref();
+      const handlePreviewContent = () => {
+        const html = editor.txt.html();
+        previewHTML.value = html;
+        drawerVisible.value = true;
+      };
+      const onDrawerClose = () => {
+        drawerVisible.value = false;
+      };
+
 
       onMounted(() => {
         handleQuery();
@@ -358,6 +377,10 @@
       });
 
       return {
+        drawerVisible,
+        previewHTML,
+        handlePreviewContent,
+        onDrawerClose,
         level1,
         columns,
         loading,
