@@ -168,16 +168,12 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       const doc = ref();
       doc.value = {};
       const param = ref();
-      const modelVisible = ref(false);
-      const modelLoading = ref(false);
       const handleSave = () => {
-        modelLoading.value = true;
         doc.value.content = editor.txt.html();
         axios.post("/doc/save", doc.value).then((response) => {
-          modelLoading.value = false;
           const data = response.data; // data = CommonResp
           if (data.success) {
-            modelVisible.value = false;
+            message.success("保存成功！");
             //重新加载列表
             handleQuery();
           } else {
@@ -263,15 +259,29 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       /**
        * 编辑页面
        */
+
+      const handleQueryContent = () => {
+        axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+          const data = response.data;
+          if (data.success) {
+            editor.txt.html(data.content);
+          } else {
+            message.error(data.message);
+          }
+        });
+      }
+
       const edit = (record: any) => {
-        modelVisible.value = true;
+        editor.txt.html("");
         doc.value = Tool.copy(record);
+        handleQueryContent();
 
         treeSelectData.value = Tool.copy(level1.value);
         setDisable(treeSelectData.value, record.id);
 
         treeSelectData.value.unshift({id: 0, name: '无'});
         console.log('treeSelectData:', treeSelectData);
+
         // if (!isCreated) {
         //   createEditor();
         //   isCreated = true;
@@ -280,7 +290,7 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
       };
 
       const add = () => {
-        modelVisible.value = true;
+        editor.txt.html("");
         doc.value = {
           ebookId: route.query.ebookId
         }
@@ -335,8 +345,6 @@ import {createVNode, defineComponent, onMounted, ref} from 'vue';
         columns,
         loading,
         edit,
-        modelVisible,
-        modelLoading,
         handleSave,
         doc,
         add,

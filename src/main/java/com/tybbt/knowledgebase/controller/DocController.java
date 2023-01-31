@@ -59,4 +59,13 @@ public class DocController {
         docService.delete(list);
         return resp;
     }
+
+    @GetMapping ("/find-content/{id}")
+    public CommonResp findContent(@PathVariable @Valid long id){
+        // 前后端参数名称需一致，才能自动映射。
+        CommonResp<String> response = new CommonResp<>();
+        String content = docService.findContent(id);
+        response.setContent(content);
+        return response;
+    }
 }
