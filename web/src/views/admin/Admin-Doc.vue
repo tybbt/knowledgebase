@@ -68,10 +68,10 @@
                   placeholder="Please select"
                   tree-default-expand-all
                   :replaceFields="{
-              title: 'name',
-              key: 'id',
-              value: 'id'
-            }"
+                    title: 'name',
+                    key: 'id',
+                    value: 'id'
+                  }"
               >
               </a-tree-select>
             </a-form-item>
@@ -104,7 +104,7 @@
 </template>
 
 <script lang="ts">
-import {createVNode, defineComponent, onMounted, ref} from 'vue';
+  import {createVNode, defineComponent, onMounted, ref} from 'vue';
   import axios from 'axios';
   import {message, Modal} from "ant-design-vue";
   import {Tool} from "@/util/tool";
