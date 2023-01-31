@@ -50,7 +50,10 @@
             </template>
             <a-list-item-meta :description="item.description">
               <template #title>
-                <a :href="item.href">{{ item.name }}</a>
+                <router-link :to="'/doc?ebookId=' + item.id">
+                  {{item.name}}
+                </router-link>
+<!--                <a :href="item.href">{{ item.name }}</a>-->
               </template>
               <template #avatar><a-avatar :src="item.cover" /></template>
             </a-list-item-meta>
