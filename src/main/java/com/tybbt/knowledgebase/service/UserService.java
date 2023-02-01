@@ -1,0 +1,84 @@
+package com.tybbt.knowledgebase.service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.tybbt.knowledgebase.domain.User;
+import com.tybbt.knowledgebase.domain.UserExample;
+import com.tybbt.knowledgebase.mapper.UserMapper;
+import com.tybbt.knowledgebase.req.UserQueryReq;
+import com.tybbt.knowledgebase.req.UserSaveReq;
+import com.tybbt.knowledgebase.resp.UserQueryResp;
+import com.tybbt.knowledgebase.resp.PageResp;
+import com.tybbt.knowledgebase.util.CopyUtil;
+import com.tybbt.knowledgebase.util.SnowFlake;
+import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
+
+@Service
+public class UserService {
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
+
+    public PageResp<UserQueryResp> list(UserQueryReq req){
+
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+
+        if (!ObjectUtils.isEmpty(req.getLoginName())) {
+            criteria.andLoginNameEqualTo(req.getLoginName());
+        }
+
+        PageHelper.startPage(req.getPage(), req.getSize());
+        // 调用UserMapper的list方法
+        List<User> userslist = userMapper.selectByExample(userExample);
+
+        PageInfo<User> pageInfo = new PageInfo<>(userslist);
+        LOG.info("总行数： {}", pageInfo.getTotal());
+        LOG.info("总页数： {}", pageInfo.getPages());
+
+        // 实体类转换，从返回的实体类转换为封装的返回实体类
+//        List<UserResp> respList = new ArrayList<>();
+//        for (User user : userslist) {
+////            UserResp userResp = new UserResp();
+////            BeanUtils.copyProperties(user, userResp);
+        //    对象赋值
+//            UserResp userResp = CopyUtil.copy(user, UserResp.class);
+//            respList.add(userResp);
+//        }
+
+        // 列表复制
+        List<UserQueryResp> list = CopyUtil.copyList(userslist, UserQueryResp.class);
+
+        PageResp<UserQueryResp> pageResp = new PageResp();
+
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+
+        return pageResp;
+    }
+
+    public void save(UserSaveReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        if (ObjectUtils.isEmpty(user.getId())) {
+            // 自增，uuid，雪花
+            user.setId(snowFlake.nextId());
+            userMapper.insert(user);
+        } else {
+            userMapper.updateByPrimaryKey(user);
+        }
+    }
+
+    public void delete(Long id) {
+        userMapper.deleteByPrimaryKey(id);
+    }
+}
