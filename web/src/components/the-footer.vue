@@ -1,6 +1,6 @@
 <template>
   <a-layout-footer style="text-align: center">
-    Knowledge Base for {{user.name}}
+    Knowledge Base <span v-show="user.id">for</span> {{user.name}}
   </a-layout-footer>
 </template>
 
