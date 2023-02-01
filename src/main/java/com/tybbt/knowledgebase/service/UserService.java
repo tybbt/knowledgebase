@@ -82,7 +82,9 @@ public class UserService {
             }
 
         } else {
-            userMapper.updateByPrimaryKey(user);
+            user.setLoginName(null);
+            // 当user属性中有字段为空时，则不会更新该字段
+            userMapper.updateByPrimaryKeySelective(user);
         }
     }
 
