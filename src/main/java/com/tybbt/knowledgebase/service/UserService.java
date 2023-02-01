@@ -8,9 +8,10 @@ import com.tybbt.knowledgebase.exception.BusinessException;
 import com.tybbt.knowledgebase.exception.BusinessExceptionCode;
 import com.tybbt.knowledgebase.mapper.UserMapper;
 import com.tybbt.knowledgebase.req.UserQueryReq;
+import com.tybbt.knowledgebase.req.UserResetPasswordReq;
 import com.tybbt.knowledgebase.req.UserSaveReq;
-import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.resp.PageResp;
+import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
 import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
@@ -87,6 +88,11 @@ public class UserService {
             // 当user属性中有字段为空时，则不会更新该字段
             userMapper.updateByPrimaryKeySelective(user);
         }
+    }
+
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     public User selectByLoginName(String loginName) {

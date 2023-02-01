@@ -1,10 +1,11 @@
 package com.tybbt.knowledgebase.controller;
 
 import com.tybbt.knowledgebase.req.UserQueryReq;
+import com.tybbt.knowledgebase.req.UserResetPasswordReq;
 import com.tybbt.knowledgebase.req.UserSaveReq;
 import com.tybbt.knowledgebase.resp.CommonResp;
-import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.resp.PageResp;
+import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -37,6 +38,16 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.save(req);
+        return resp;
+    }
+
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        // 前端如果使用POST提交中Content-Type为application/json方式，则需要RequestBody注解包裹request才能处理，axios使用json
+        // 如果利用application/x-www-form的方式提交则不需要加注解
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 

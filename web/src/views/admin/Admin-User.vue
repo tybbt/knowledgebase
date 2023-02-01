@@ -33,7 +33,7 @@
           <span>
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">编辑</a-button>
-
+              <a-button type="primary" @click="resetPassword(record)" >重置密码</a-button>
               <a-popconfirm
                   title="删除后不可恢复，确认删除？"
                   ok-text="是"
@@ -66,6 +66,21 @@
       </a-form-item>
 
       <a-form-item label="密码" v-show="!user.id">
+        <a-input v-model:value="user.password" />
+      </a-form-item>
+
+    </a-form>
+  </a-modal>
+
+  <a-modal
+      title="重置密码"
+      v-model:visible="resetModelVisible"
+      :confirm-loading="resetModelLoading"
+      @ok="handleResetModelOK"
+  >
+    <a-form :model="user" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+
+      <a-form-item label="新密码">
         <a-input v-model:value="user.password" />
       </a-form-item>
 
@@ -213,6 +228,36 @@
         });
       };
 
+      const resetModelVisible = ref(false);
+      const resetModelLoading = ref(false);
+      const handleResetModelOK = () => {
+        resetModelLoading.value = true;
+        user.value.password = hexMd5(user.value.password + KEY);
+        console.log('send reset', user);
+        axios.post("/user/reset-password", user.value).then((response) => {
+          resetModelLoading.value = false;
+          // console.log("save user:", user);
+          const data = response.data; // data = CommonResp
+          if (data.success) {
+            resetModelVisible.value = false;
+
+            //重新加载列表
+            handleQuery({
+              page: pagination.value.current,
+              size: pagination.value.pageSize
+            });
+          } else {
+            message.error(data.message);
+          }
+        });
+      };
+
+      const resetPassword = (record: any) => {
+        resetModelVisible.value = true;
+        user.value = Tool.copy(record);
+        user.value.password = null;
+      };
+
       onMounted(() => {
         handleQuery({
           page: 1,
@@ -236,6 +281,10 @@
         del,
         value,
         onSearch,
+        resetModelVisible,
+        resetModelLoading,
+        handleResetModelOK,
+        resetPassword
       }
     }
   });
