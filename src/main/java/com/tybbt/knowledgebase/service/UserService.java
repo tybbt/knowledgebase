@@ -7,10 +7,12 @@ import com.tybbt.knowledgebase.domain.UserExample;
 import com.tybbt.knowledgebase.exception.BusinessException;
 import com.tybbt.knowledgebase.exception.BusinessExceptionCode;
 import com.tybbt.knowledgebase.mapper.UserMapper;
+import com.tybbt.knowledgebase.req.UserLoginReq;
 import com.tybbt.knowledgebase.req.UserQueryReq;
 import com.tybbt.knowledgebase.req.UserResetPasswordReq;
 import com.tybbt.knowledgebase.req.UserSaveReq;
 import com.tybbt.knowledgebase.resp.PageResp;
+import com.tybbt.knowledgebase.resp.UserLoginResp;
 import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
 import com.tybbt.knowledgebase.util.SnowFlake;
@@ -109,5 +111,24 @@ public class UserService {
 
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDb)) {
+            // 用户名不存在
+            LOG.info("用户名不存在，{}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+        } else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // 登陆成功
+                UserLoginResp userLoginResp = CopyUtil.copy(userDb, UserLoginResp.class);
+                return userLoginResp;
+            } else {
+                // 密码不对
+                LOG.info("密码错误，{}", req.getPassword());
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
+        }
     }
 }

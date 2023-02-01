@@ -1,10 +1,12 @@
 package com.tybbt.knowledgebase.controller;
 
+import com.tybbt.knowledgebase.req.UserLoginReq;
 import com.tybbt.knowledgebase.req.UserQueryReq;
 import com.tybbt.knowledgebase.req.UserResetPasswordReq;
 import com.tybbt.knowledgebase.req.UserSaveReq;
 import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.resp.PageResp;
+import com.tybbt.knowledgebase.resp.UserLoginResp;
 import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.service.UserService;
 import jakarta.annotation.Resource;
@@ -56,6 +58,17 @@ public class UserController {
         // delete 一般根据id删除，所以需要在接口中明确需要删除的id，这个id通过PathVariable映射给id参数
         CommonResp resp = new CommonResp<>();
         userService.delete(id);
+        return resp;
+    }
+
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        // 前端如果使用POST提交中Content-Type为application/json方式，则需要RequestBody注解包裹request才能处理，axios使用json
+        // 如果利用application/x-www-form的方式提交则不需要加注解
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }
