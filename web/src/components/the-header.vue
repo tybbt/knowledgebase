@@ -46,10 +46,17 @@
         </router-link>
       </a-menu-item>
 
-      <a class="login-menu" @click="showLoginModal">
+      <a class="login-menu" @click="showLoginModal" v-if="!user.id">
         <span>
           <SmileOutlined />
           登录
+        </span>
+      </a>
+
+      <a class="login-menu" v-if="user.id" >
+        <span>
+          <SmileOutlined />
+          您好：{{ user.name }}
         </span>
       </a>
 
@@ -87,7 +94,11 @@ declare let KEY: any;
 export default defineComponent({
   name: 'the-header',
   setup () {
+    //登陆保存
+    const user = ref();
+    user.value = {};
 
+    //用于登录
     const loginUser = ref();
 
     const loginModalVisible = ref(false);
@@ -96,8 +107,8 @@ export default defineComponent({
     const showLoginModal = () => {
       loginModalVisible.value = true;
       loginUser.value = {
-        loginName: "",
-        password: ""
+        loginName: "test",
+        password: "test123"
       };
     };
 
@@ -110,6 +121,7 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           loginModalVisible.value = false;
+          user.value = data.content;
           message.success("登陆成功！");
         } else {
           message.error(data.message);
@@ -122,7 +134,8 @@ export default defineComponent({
       loginModalVisible,
       loginModalLoading,
       showLoginModal,
-      login
+      login,
+      user
     }
   }
 
