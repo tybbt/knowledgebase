@@ -88,6 +88,7 @@
 import {defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
+import store from "@/store";
 declare let hexMd5: any;
 declare let KEY: any;
 
@@ -123,6 +124,8 @@ export default defineComponent({
           loginModalVisible.value = false;
           user.value = data.content;
           message.success("登陆成功！");
+          // 设置全局变量
+          store.commit("setUser", user);
         } else {
           message.error(data.message);
         }
