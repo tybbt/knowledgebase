@@ -46,19 +46,58 @@
         </router-link>
       </a-menu-item>
 
-      <a class="login-menu" @click="showLoginModal" v-if="!user.id">
+      <a class="login-menu" @click="showLoginModal" v-show="!user.id">
         <span>
           <SmileOutlined />
           登录
         </span>
       </a>
 
-      <a class="login-menu" v-if="user.id" >
-        <span>
-          <SmileOutlined />
+      <a-dropdown v-show="user.id">
+        <a class="ant-dropdown-link" v-show="user.id" @click.prevent >
           您好：{{ user.name }}
-        </span>
-      </a>
+          <DownOutlined />
+        </a>
+        <template #overlay>
+          <a-menu>
+            <a-menu-item>
+              <a-popconfirm
+                  title="确认退出登录？"
+                  ok-text="是"
+                  cancel-text="否"
+                  @confirm="logout"
+              >
+                <a class="menu-content" v-show="user.id">
+                  <span>
+                    退出登录
+                  </span>
+                </a>
+              </a-popconfirm>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
+
+<!--      <a-space class="login-menu" size="middle" direction="horizontal">-->
+<!--        <a class="menu-content" v-show="user.id" >-->
+<!--          <span>-->
+<!--            <SmileOutlined />-->
+<!--            您好：{{ user.name }}-->
+<!--          </span>-->
+<!--        </a>-->
+<!--        <a-popconfirm-->
+<!--            title="确认退出登录？"-->
+<!--            ok-text="是"-->
+<!--            cancel-text="否"-->
+<!--            @confirm="logout"-->
+<!--        >-->
+<!--          <a class="menu-content" v-show="user.id">-->
+<!--            <span>-->
+<!--              退出登录-->
+<!--            </span>-->
+<!--          </a>-->
+<!--        </a-popconfirm>-->
+<!--      </a-space>-->
 
     </a-menu>
 
@@ -112,19 +151,41 @@ export default defineComponent({
       };
     };
 
+    const refreshRedis = () => {
+      axios.get("/user/login/all").then((response) => {
+        console.log("【BUG修复】该部分用于刷新redis，存储到redis后，若不执行一次keys搜索操作，则后续的查不出来" +
+            response.data.success
+        )
+      })
+    }
+
     const login = () => {
       console.log("开始登陆");
       loginModalLoading.value = true;
       loginUser.value.password = hexMd5(loginUser.value.password + KEY);
-      axios.post('user/login', loginUser.value).then((response) => {
+      axios.post('/user/login', loginUser.value).then((response) => {
         loginModalLoading.value = false;
         const data = response.data;
         if (data.success) {
           loginModalVisible.value = false;
           message.success("登陆成功！");
           // 设置全局变量
-
           store.commit("setUser", data.content);
+          refreshRedis();
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const logout = () => {
+      console.log("退出登陆");
+      axios.get('/redis/logout/' + user.value.token).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          message.success("退出登陆成功！");
+          // 设置全局变量
+          store.commit("setUser", {});
 
         } else {
           message.error(data.message);
@@ -138,6 +199,7 @@ export default defineComponent({
       loginModalLoading,
       showLoginModal,
       login,
+      logout,
       user
     }
   }
@@ -151,6 +213,15 @@ export default defineComponent({
     float: right !important;
     color: white;
     position: absolute;
-    right: 0px;
+    right: 70px;
+  }
+  .menu-content {
+    color: dodgerblue;
+  }
+  .ant-dropdown-link{
+    float: right !important;
+    color: white;
+    position: absolute;
+    right: 70px;
   }
 </style>

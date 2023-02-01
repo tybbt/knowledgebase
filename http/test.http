@@ -1,5 +1,5 @@
-GET http://localhost:8080/redis/get/275919121705734144
-//Accept: application/json
+GET http://localhost:8080/redis/get/275822673332932608
+#Accept: application/json
 // 测试文件，窗口测试文件，用于确认http内容能否正确返回, 节省窗口切换耗时
 //使用 gtr 自动生成 是 Live Template, 有自定义需求请到 Setting->Editor->Live Templates 添加
 //同时可以写结果验证的单元测试脚本

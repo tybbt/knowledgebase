@@ -1,0 +1,16 @@
+GET http://localhost:8080/redis/all
+
+###
+GET http://localhost:8080/redis/get/275984139566583808
+
+###
+GET http://localhost:8080/redis/logout/275984139566583808
+
+###
+GET http://localhost:8080/user/login/all
+
+###
+GET http://localhost:8080/redis/get/275984139566583808
+
+###
+GET http://localhost:8080/user/logout/275984139566583808

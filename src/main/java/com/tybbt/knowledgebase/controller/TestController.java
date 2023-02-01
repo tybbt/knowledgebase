@@ -1,6 +1,7 @@
 package com.tybbt.knowledgebase.controller;
 
 import com.tybbt.knowledgebase.domain.Test;
+import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.service.TestService;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -8,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +22,6 @@ public class TestController {
     // 用于加载application自定义配置项，使用 custom.args:Default 作为默认配置防止转移环境时忘记配置
     @Value("${test.hello:TEST}")
     private String testHello;
-
-    @Resource
-    private RedisTemplate redisTemplate;
 
     @Autowired
     private TestService testService;
@@ -55,19 +50,36 @@ public class TestController {
         return testService.list();
     }
 
+    @Resource
+    private RedisTemplate<Object, Object> redisTemplate;
+
     @RequestMapping("/redis/set/{key}/{value}")
-    public String set(@PathVariable Long key, @PathVariable String value) {
-        redisTemplate.opsForValue().set(key, value, 3600, TimeUnit.SECONDS);
+    public String set(@PathVariable String key, @PathVariable String value) {
+        redisTemplate.opsForValue().set(key, value, 3600*24, TimeUnit.SECONDS);
         LOG.info("SET Redis - key: {}, value: {}", key, value);
         return "success";
     }
 
-    @RequestMapping("/redis/get/{key}")
-    public Object get(@PathVariable Long key) {
+    @GetMapping("/redis/get/{key}")
+    public Object get(@PathVariable String key) {
         Object object = redisTemplate.opsForValue().get(key);
         LOG.info("GET Redis - key: {}, value: {}", key, object);
         return object;
     }
 
+    @GetMapping("/redis/all")
+    public Object all() {
+        Object object = redisTemplate.keys("*");
+        LOG.info("GET Redis All keys: {}", object);
+        return object;
+    }
+
+    @GetMapping("/redis/logout/{token}")
+    public CommonResp logout(@PathVariable String token) {
+        CommonResp resp = new CommonResp<>();
+        redisTemplate.delete(token);
+        LOG.info("DELETE Redis key: {}", token);
+        return resp;
+    }
 
 }
