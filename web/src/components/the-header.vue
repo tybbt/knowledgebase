@@ -6,7 +6,8 @@
     <a-menu
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px' }"
+        :style="{ lineHeight: '64px', position: 'relative' }"
+
     >
       <a-menu-item>
         <a-space size="small">
@@ -87,16 +88,17 @@ export default defineComponent({
   name: 'the-header',
   setup () {
 
-    const loginUser = ref({
-      loginName: "test",
-      password: "test"
-    });
+    const loginUser = ref();
 
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
 
     const showLoginModal = () => {
       loginModalVisible.value = true;
+      loginUser.value = {
+        loginName: "",
+        password: ""
+      };
     };
 
     const login = () => {
@@ -132,7 +134,7 @@ export default defineComponent({
   .login-menu {
     float: right !important;
     color: white;
-    padding-left: 10px;
-    margin-right: 10px;
+    position: absolute;
+    right: 0px;
   }
 </style>
