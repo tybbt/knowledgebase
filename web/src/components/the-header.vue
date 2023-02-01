@@ -48,7 +48,7 @@
 
       <a class="login-menu" @click="showLoginModal">
         <span>
-          <UserOutlined />
+          <SmileOutlined />
           登录
         </span>
       </a>

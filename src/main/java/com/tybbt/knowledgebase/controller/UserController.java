@@ -1,5 +1,6 @@
 package com.tybbt.knowledgebase.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tybbt.knowledgebase.req.UserLoginReq;
 import com.tybbt.knowledgebase.req.UserQueryReq;
 import com.tybbt.knowledgebase.req.UserResetPasswordReq;
@@ -9,19 +10,33 @@ import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.resp.UserLoginResp;
 import com.tybbt.knowledgebase.resp.UserQueryResp;
 import com.tybbt.knowledgebase.service.UserService;
+import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
 // 在外层类增加@RequestMapping注解，可以直接作为公共的上层链接，后续内部无论使用GET POST都可以作为请求的前缀
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    
     // 用于加载application自定义配置项，使用 custom.args:Default 作为默认配置防止转移环境时忘记配置
     @Resource
     private UserService userService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     // 程序接口入口 -> 调用userService 的list方法
     @GetMapping ("/list")
@@ -68,6 +83,13 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp<UserLoginResp> resp = new CommonResp<>();
         UserLoginResp userLoginResp = userService.login(req);
+
+        // 生成单点登录token，放入redis
+        Long token = snowFlake.nextId();
+        LOG.info("生成单点登录token: {}，放入redis", token);
+        userLoginResp.setToken(token.toString());
+        redisTemplate.opsForValue().set(token, JSONObject.toJSONString(userLoginResp), 3600*24, TimeUnit.SECONDS);
+
         resp.setContent(userLoginResp);
         return resp;
     }
