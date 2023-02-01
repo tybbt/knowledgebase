@@ -8,6 +8,7 @@ import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 // @RestController 用于返回一个字符串，一般是Json对象 | @Controller用于返回一个页面
@@ -33,6 +34,7 @@ public class UserController {
     public CommonResp save(@Valid @RequestBody UserSaveReq req){
         // 前端如果使用POST提交中Content-Type为application/json方式，则需要RequestBody注解包裹request才能处理，axios使用json
         // 如果利用application/x-www-form的方式提交则不需要加注解
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.save(req);
         return resp;

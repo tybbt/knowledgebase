@@ -11,7 +11,7 @@ public class UserSaveReq {
     @NotNull(message = "[昵称不能为空]")
     private String name;
     @NotNull(message = "[密码不能为空]")
-    @Pattern(regexp = "^(?![0-9]+$)[0-9A-Za-z]{6,20}$", message = "[密码]至少包含数字和英文，长度6-20")
+    @Pattern(regexp = "^(?![0-9]+$)[0-9A-Za-z]{6,32}$", message = "[密码]至少包含数字和英文，长度6-32")
     private String password;
 
     public Long getId() {
