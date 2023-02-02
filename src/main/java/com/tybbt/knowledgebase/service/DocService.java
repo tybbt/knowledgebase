@@ -21,6 +21,7 @@ import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -148,7 +149,8 @@ public class DocService {
         }
 
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        wsService.voteNotification("【" + docDb.getName() + "】收获一个点赞！");
+        String log_id = MDC.get("LOG_ID");
+        wsService.voteNotification("【" + docDb.getName() + "】收获一个点赞！", log_id);
     }
 
     // 异步化会为当前的异步方法所在类生成一个代理类，所以需要异步化所在的类和调用异步方法不处于同一个类中
