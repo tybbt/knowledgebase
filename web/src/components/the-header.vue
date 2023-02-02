@@ -22,6 +22,12 @@
         </router-link>
       </a-menu-item>
 
+      <a-menu-item key="/about">
+        <router-link to="/about">
+          关于我们
+        </router-link>
+      </a-menu-item>
+
       <a-menu-item key="/admin/user" :style="user.id? {} : {display: 'none'}">
         <router-link to="/admin/user">
           用户管理
@@ -40,20 +46,14 @@
         </router-link>
       </a-menu-item>
 
-      <a-menu-item key="/about">
-        <router-link to="/about">
-          关于我们
-        </router-link>
-      </a-menu-item>
-
       <a class="login-menu" @click="showLoginModal" v-show="!user.id">
         <span>
           登录
         </span>
       </a>
 
-      <a-dropdown v-show="user.id">
-        <a class="ant-dropdown-link" v-show="user.id" @click.prevent >
+      <a-dropdown v-show="!!user.id && !$route.meta.loginRequire">
+        <a class="ant-dropdown-link" v-show="!!user.id && !$route.meta.loginRequire" @click.prevent >
           您好：{{ user.name }}
           <DownOutlined />
         </a>
@@ -158,9 +158,20 @@ export default defineComponent({
     //   })
     // }
 
+    /*校验是否全由8位数字组成 */
+    function isPwdFormatValid(str: string) {
+      let reg=/^(?![0-9]+$)[0-9A-Za-z]{6,32}$/;  /*定义验证表达式*/
+      return reg.test(str);   /*进行验证*/
+    }
+
     const login = () => {
       console.log("开始登陆");
       loginModalLoading.value = true;
+      if (!isPwdFormatValid(loginUser.value.password)) {
+        loginModalLoading.value = false;
+        message.error("[密码]应包含英文和数组，长度6-20位");
+        return;
+      }
       loginUser.value.password = hexMd5(loginUser.value.password + KEY);
       axios.post('/user/login', loginUser.value).then((response) => {
         loginModalLoading.value = false;
