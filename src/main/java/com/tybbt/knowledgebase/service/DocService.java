@@ -18,6 +18,7 @@ import com.tybbt.knowledgebase.util.CopyUtil;
 import com.tybbt.knowledgebase.util.RedisUtil;
 import com.tybbt.knowledgebase.util.RequestContext;
 import com.tybbt.knowledgebase.util.SnowFlake;
+import com.tybbt.knowledgebase.websocket.WebSocketServer;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ public class DocService {
 
     @Resource
     public RedisUtil redisUtil;
+
+    @Resource
+    private WebSocketServer webSocketServer;
 
 
     public PageResp<DocQueryResp> list(DocQueryReq req){
@@ -143,7 +147,13 @@ public class DocService {
         } else {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
+
+        // 推送消息
+        Doc docDb = docMapper.selectByPrimaryKey(id);
+        webSocketServer.sendInfo("【" + docDb.getName() + "】收获一个点赞！");
     }
+
+
 
     public void updateEbookInfo() {
         docMapperCust.updateEbookInfo();

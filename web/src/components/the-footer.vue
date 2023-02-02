@@ -5,9 +5,11 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted} from 'vue';
+import {computed, defineComponent, h, onMounted} from 'vue';
 import store from "@/store";
 import {Tool} from "@/util/tool";
+import {notification} from "ant-design-vue";
+import {LikeOutlined} from "@ant-design/icons-vue";
 
 export default defineComponent({
   name: 'the-footer',
@@ -22,6 +24,11 @@ export default defineComponent({
 
     const onMessage = (event: any) => {
       console.log("websocket 收到消息： ", event.data);
+      notification.open({
+        message: '新消息',
+        description: event.data,
+        icon: h(LikeOutlined, { style: 'color: #108ee9' }),
+      });
     }
 
     const onError = () => {
