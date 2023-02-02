@@ -106,7 +106,6 @@ public class DocService {
         criteria.andIdIn(ids);
         docMapper.deleteByExample(docExample);
     }
-
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
         // 文档阅读数 + 1
@@ -129,5 +128,9 @@ public class DocService {
         List<DocQueryResp> list = CopyUtil.copyList(docslist, DocQueryResp.class);
 
         return list;
+    }
+
+    public void vote(Long id) {
+        docMapperCust.increaseVoteCount(id);
     }
 }

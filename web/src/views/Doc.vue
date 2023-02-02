@@ -29,7 +29,14 @@
             </div>
             <a-divider style="height: 2px; background-color: #9999cc" />
           </div>
+
           <div class="wangeditor" :innerHTML="html"></div>
+
+          <div class="vote-div">
+            <a-button type="primary" shape="round" :size="'large'" @click="vote">
+              <template #icon> <LikeOutlined/> &nbsp;点赞：{{doc.voteCount}} </template>
+            </a-button>
+          </div>
         </a-col>
       </a-row>
     </a-layout-content>
@@ -104,7 +111,19 @@ export default defineComponent({
       if (Tool.isNotEmpty(selectedKeys)) {
         handleQueryContent(selectedKeys[0]);
         doc.value = info.selectedNodes[0].props;
+        doc.value.viewCount += 1;
       }
+    };
+
+    const vote = () => {
+      axios.get('/doc/vote/' + doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          doc.value.voteCount += 1;
+        } else {
+          message.error(data.message);
+        }
+      });
     };
 
     onMounted(() => {
@@ -117,7 +136,8 @@ export default defineComponent({
       onSelect,
       html,
       defaultSelectedKeys,
-      doc
+      doc,
+      vote
     }
   }
 });
@@ -195,6 +215,11 @@ export default defineComponent({
 .wangeditor iframe {
   width: 100%;
   height: 400px;
+}
+
+.vote-div {
+  padding: 15px;
+  text-align: center;
 }
 </style>
 
