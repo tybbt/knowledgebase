@@ -48,7 +48,6 @@
 
       <a class="login-menu" @click="showLoginModal" v-show="!user.id">
         <span>
-          <SmileOutlined />
           登录
         </span>
       </a>
@@ -151,13 +150,13 @@ export default defineComponent({
       };
     };
 
-    const refreshRedis = () => {
-      axios.get("/user/login/all").then((response) => {
-        console.log("【BUG修复】该部分用于刷新redis，存储到redis后，若不执行一次keys搜索操作，则后续的查不出来" +
-            response.data.success
-        )
-      })
-    }
+    // const refreshRedis = () => {
+    //   axios.get("/user/login/all").then((response) => {
+    //     console.log("【BUG修复】该部分用于刷新redis，存储到redis后，若不执行一次keys搜索操作，则后续的查不出来" +
+    //         response.data.success
+    //     )
+    //   })
+    // }
 
     const login = () => {
       console.log("开始登陆");
@@ -171,7 +170,9 @@ export default defineComponent({
           message.success("登陆成功！");
           // 设置全局变量
           store.commit("setUser", data.content);
-          refreshRedis();
+          console.log("登陆成功，返回：", data.content);
+          console.log("登陆后store：", store.state.user);
+          // refreshRedis();
         } else {
           message.error(data.message);
         }

@@ -89,7 +89,8 @@ public class UserController {
         LOG.info("生成单点登录token: {}，放入redis, 值为 {}", token.toString(), JSONObject.toJSONString(userLoginResp));
         userLoginResp.setToken(token.toString());
         redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600*24, TimeUnit.SECONDS);
-
+        Object object = redisTemplate.keys("*");
+        LOG.info("GET Redis All keys: {}", object);
         resp.setContent(userLoginResp);
         return resp;
     }
