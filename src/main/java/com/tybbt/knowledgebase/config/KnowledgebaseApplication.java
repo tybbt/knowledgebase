@@ -7,12 +7,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 // 使用SpringBootApplication 注解中使用了@ComponentScan注解，在启动时会扫描当前包和所有子包中的所有组件，
 // 但当未处于同一个包，则需额外配置参数设定访问域("com.xxx..."),参数支持列表方式({"com.tybbt", "com.jie"})
 @ComponentScan("com.tybbt.knowledgebase")
 @SpringBootApplication
 @MapperScan("com.tybbt.knowledgebase.mapper")
+@EnableScheduling
 public class KnowledgebaseApplication {
     private static final Logger LOG = LoggerFactory.getLogger(KnowledgebaseApplication.class);
     public static void main(String[] args) {
