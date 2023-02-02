@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.tybbt.knowledgebase.domain.Content;
 import com.tybbt.knowledgebase.domain.Doc;
 import com.tybbt.knowledgebase.domain.DocExample;
+import com.tybbt.knowledgebase.exception.BusinessException;
+import com.tybbt.knowledgebase.exception.BusinessExceptionCode;
 import com.tybbt.knowledgebase.mapper.ContentMapper;
 import com.tybbt.knowledgebase.mapper.DocMapper;
 import com.tybbt.knowledgebase.mapper.DocMapperCust;
@@ -13,6 +15,8 @@ import com.tybbt.knowledgebase.req.DocSaveReq;
 import com.tybbt.knowledgebase.resp.DocQueryResp;
 import com.tybbt.knowledgebase.resp.PageResp;
 import com.tybbt.knowledgebase.util.CopyUtil;
+import com.tybbt.knowledgebase.util.RedisUtil;
+import com.tybbt.knowledgebase.util.RequestContext;
 import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -38,7 +42,8 @@ public class DocService {
     @Resource
     private DocMapperCust docMapperCust;
 
-
+    @Resource
+    public RedisUtil redisUtil;
 
 
     public PageResp<DocQueryResp> list(DocQueryReq req){
@@ -131,6 +136,12 @@ public class DocService {
     }
 
     public void vote(Long id) {
-        docMapperCust.increaseVoteCount(id);
+        // 使用远程ip + doc.id 作为key存入redis做校验，防止24小时内的重复点赞
+        String ip = RequestContext.getRemoteAddr(); // 远程ip
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600*24)){
+            docMapperCust.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.tybbt.knowledgebase.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
+import com.tybbt.knowledgebase.util.RequestContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +44,8 @@ public class LogAspect {
         LOG.info("类名方法: {}.{}", signature.getDeclaringTypeName(), name);
         LOG.info("远程地址: {}", request.getRemoteAddr());
 
+        RequestContext.setRemoteAddr(getRemoteIp(request));
+
         // 打印请求参数
         Object[] args = joinPoint.getArgs();
         // LOG.info("请求参数: {}", JSONObject.toJSONString(args));
@@ -77,6 +80,25 @@ public class LogAspect {
         LOG.info("返回结果: {}", JSONObject.toJSONString(result, excludefilter));
         LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
+    }
+
+    /**
+     * 后续生产环境会使用nginx做反向代理，请求会先发送到nginx再到服务器，所以需要多层取
+     * @param request
+     * @return
+     */
+    public String getRemoteIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-forward-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
 }
