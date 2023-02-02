@@ -52,8 +52,8 @@
         </span>
       </a>
 
-      <a-dropdown v-show="!!user.id && !$route.meta.loginRequire">
-        <a class="ant-dropdown-link" v-show="!!user.id && !$route.meta.loginRequire" @click.prevent >
+      <a-dropdown v-show="user.id">
+        <a class="ant-dropdown-link" v-show="user.id" @click.prevent >
           您好：{{ user.name }}
           <DownOutlined />
         </a>
@@ -127,6 +127,7 @@ import {computed, defineComponent, ref} from 'vue';
 import axios from "axios";
 import {message} from "ant-design-vue";
 import store from "@/store";
+import router from "@/router";
 declare let hexMd5: any;
 declare let KEY: any;
 
@@ -135,7 +136,6 @@ export default defineComponent({
   setup () {
     //登陆保存
     const user = computed(()=>store.state.user);
-
     //用于登录
     const loginUser = ref();
 
@@ -198,7 +198,8 @@ export default defineComponent({
           message.success("退出登陆成功！");
           // 设置全局变量
           store.commit("setUser", {});
-
+          // 退出登录时返回首页
+          router.push('/');
         } else {
           message.error(data.message);
         }
