@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 // 使用SpringBootApplication 注解中使用了@ComponentScan注解，在启动时会扫描当前包和所有子包中的所有组件，
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @MapperScan("com.tybbt.knowledgebase.mapper")
 @EnableScheduling
+@EnableAsync
 public class KnowledgebaseApplication {
     private static final Logger LOG = LoggerFactory.getLogger(KnowledgebaseApplication.class);
     public static void main(String[] args) {

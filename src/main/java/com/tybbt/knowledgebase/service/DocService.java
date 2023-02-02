@@ -18,7 +18,6 @@ import com.tybbt.knowledgebase.util.CopyUtil;
 import com.tybbt.knowledgebase.util.RedisUtil;
 import com.tybbt.knowledgebase.util.RequestContext;
 import com.tybbt.knowledgebase.util.SnowFlake;
-import com.tybbt.knowledgebase.websocket.WebSocketServer;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class DocService {
     public RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    public WsService wsService;
 
 
     public PageResp<DocQueryResp> list(DocQueryReq req){
@@ -148,12 +147,17 @@ public class DocService {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
 
-        // 推送消息
         Doc docDb = docMapper.selectByPrimaryKey(id);
-        webSocketServer.sendInfo("【" + docDb.getName() + "】收获一个点赞！");
+        wsService.voteNotification("【" + docDb.getName() + "】收获一个点赞！");
     }
 
-
+    // 异步化会为当前的异步方法所在类生成一个代理类，所以需要异步化所在的类和调用异步方法不处于同一个类中
+//    @Async
+//    public void voteNotification(Long id){
+//        // 推送消息
+//        Doc docDb = docMapper.selectByPrimaryKey(id);
+//        webSocketServer.sendInfo("【" + docDb.getName() + "】收获一个点赞！");
+//    }
 
     public void updateEbookInfo() {
         docMapperCust.updateEbookInfo();
