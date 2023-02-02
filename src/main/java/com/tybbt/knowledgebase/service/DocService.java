@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -83,6 +84,9 @@ public class DocService {
         return pageResp;
     }
 
+    // Transactional 注解是事务注解，让保存时能多表联动，保持数据一致性，此处save方法实在docController调用，所以事务注解会起作用，
+    // 但与Async注解一样， Transactional注解标注的方法在类内的其他方法中调用时不会生效，因为是无法调用到注解注入生成的代理类。
+    @Transactional
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content content = CopyUtil.copy(req, Content.class);
