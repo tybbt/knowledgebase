@@ -7,6 +7,7 @@ import com.tybbt.knowledgebase.domain.Doc;
 import com.tybbt.knowledgebase.domain.DocExample;
 import com.tybbt.knowledgebase.mapper.ContentMapper;
 import com.tybbt.knowledgebase.mapper.DocMapper;
+import com.tybbt.knowledgebase.mapper.DocMapperCust;
 import com.tybbt.knowledgebase.req.DocQueryReq;
 import com.tybbt.knowledgebase.req.DocSaveReq;
 import com.tybbt.knowledgebase.resp.DocQueryResp;
@@ -33,6 +34,12 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
+
+
+
 
     public PageResp<DocQueryResp> list(DocQueryReq req){
 
@@ -74,6 +81,8 @@ public class DocService {
             // 自增，uuid，雪花
             long newId = snowFlake.nextId();
             doc.setId(newId);
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
 
             content.setId(newId);
@@ -100,6 +109,8 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+        // 文档阅读数 + 1
+        docMapperCust.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)) {
             return "";
         }
