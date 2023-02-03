@@ -4,6 +4,8 @@ import com.tybbt.knowledgebase.resp.CommonResp;
 import com.tybbt.knowledgebase.resp.StatisticResp;
 import com.tybbt.knowledgebase.service.EbookSnapshotService;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/ebook-snapshot")
 public class EbookSnapshotController {
+    private static final Logger LOG = LoggerFactory.getLogger(EbookSnapshotController.class);
     // 用于加载application自定义配置项，使用 custom.args:Default 作为默认配置防止转移环境时忘记配置
     @Resource
     private EbookSnapshotService ebookSnapshotService;
@@ -22,6 +25,7 @@ public class EbookSnapshotController {
     @RequestMapping("/get-statistic")
     public CommonResp getStatistic() {
         List<StatisticResp> statisticResp = ebookSnapshotService.getStatistic();
+        LOG.info("查询首页统计数据：{}", statisticResp);
         CommonResp<List<StatisticResp>> commonResp = new CommonResp<>();
         commonResp.setContent(statisticResp);
         return commonResp;
