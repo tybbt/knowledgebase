@@ -1,6 +1,8 @@
 <template>
   <a-layout-header class="header">
     <div class="logo">
+      <img src="/image/KBlogo.png" alt="logo" />
+      知识库
     </div>
 
     <a-menu
@@ -9,13 +11,6 @@
         :style="{ lineHeight: '64px', position: 'relative' }"
 
     >
-      <a-menu-item>
-        <a-space size="small">
-          <img src="/image/KBlogo.png" alt="logo" />
-          知识库
-        </a-space>
-      </a-menu-item>
-
       <a-menu-item key="/">
         <router-link to="/">
           首页
@@ -236,5 +231,14 @@ export default defineComponent({
     color: white;
     position: absolute;
     right: 70px;
+  }
+  .logo {
+    width: 120px;
+    height: 31px;
+    /*background: rgba(255, 255, 255, 0.2);*/
+    /*margin: 16px 28px 16px 0;*/
+    float: left;
+    color: white;
+    font-size: 18px;
   }
 </style>
