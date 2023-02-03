@@ -39,14 +39,7 @@
     </a-layout-sider>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎</h1>
-        <h3>
-          启动前，请确认已启动redis，本地 cd -> D/downloads/REDIS
-          redis-server --service-start
-          使用后请结束
-          redis-server --service-stop
-          重启电脑后若报错先确认windows服务中redis服务是否启动。
-        </h3>
+        <the-welcome></the-welcome>
       </div>
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
         <template #renderItem="{ item }">
@@ -86,6 +79,7 @@
   import axios from 'axios';
   import {Tool} from "@/util/tool";
   import {message} from "ant-design-vue";
+  import TheWelcome from "@/components/the-welcome";
 
   // const listData = [];
   //
@@ -103,6 +97,9 @@
 
   export default defineComponent({
     name: 'Home',
+    components: {
+      TheWelcome
+    },
     setup() {
       console.log("set up");
       const isShowWelcome = ref(true);
