@@ -1,6 +1,5 @@
 package com.tybbt.knowledgebase.job;
 
-import com.tybbt.knowledgebase.service.DocService;
 import com.tybbt.knowledgebase.service.EbookSnapshotService;
 import com.tybbt.knowledgebase.util.SnowFlake;
 import jakarta.annotation.Resource;
@@ -22,7 +21,7 @@ public class EbookSnapshotJob {
      * 自定义cron表达式跑批
      * 每30秒更新电子书信息
      */
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void cron() {
         // 增加日志流水号
         MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));

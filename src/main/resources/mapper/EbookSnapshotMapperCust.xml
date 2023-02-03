@@ -1,37 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.tybbt.knowledgebase.mapper.EbookSnapshotMapperCust" >
+<mapper namespace="com.tybbt.knowledgebase.mapper.EbookSnapshotMapperCust">
 
     <update id="getSnapshot">
---         # 查询ebook(t1)的id和日期、查询条件是不存在在快照表中，判断存在的方法是在两表中的id和日期是否相同，判断是否为已存在的数据
+        <!--       # 查询ebook(t1)的id和日期、查询条件是不存在在快照表中，判断存在的方法是在两表中的id和日期是否相同，判断是否为已存在的数据-->
         insert into ebook_snapshot(ebook_id, `date`, view_count, vote_count, view_increase, vote_increase)
         select t1.id, curdate(), 0, 0, 0, 0
         from ebook t1
         where not exists(select 1 from ebook_snapshot t2 where t1.id = t2.ebook_id and t2.`date` = curdate());
 
 
---         # 更新总阅读数、总点赞数
+        <!--    # 更新总阅读数、总点赞数-->
         update ebook_snapshot t1, ebook t2
         set t1.view_count = t2.view_count, t1.vote_count = t2.vote_count
         where t1.`date` = curdate() and t1.ebook_id = t2.id;
 
 
---         # 获取昨日数据
---         select t1.ebook_id, t1.`date`, t1.view_count, t1.vote_count
---         from ebook_snapshot t1
---         where t1.`date` = date_sub(curdate(), interval 1 day );
+        <!--  # 获取昨日数据
+        select t1.ebook_id, t1.`date`, t1.view_count, t1.vote_count
+        from ebook_snapshot t1
+        where t1.`date` = date_sub(curdate(), interval 1 day );  -->
 
 
---         # 今天的数据与昨日数据进行比较 lift join 表示更新左边的表无论右边有没有
+        <!--   # 今天的数据与昨日数据进行比较 lift join 表示更新左边的表无论右边有没有 -->
         update ebook_snapshot t1 left join
-            (select ebook_id, `date`, view_count, vote_count
-            from ebook_snapshot
-            where `date` = date_sub(curdate(), interval 1 day )) t2
+        (select ebook_id, `date`, view_count, vote_count
+        from ebook_snapshot
+        where `date` = date_sub(curdate(), interval 1 day )) t2
         on t1.ebook_id = t2.ebook_id
-            set t1.view_increase = (t1.view_count - ifnull(t2.view_count, 0)),
-                t1.vote_increase = (t1.vote_count - ifnull(t2.vote_count, 0))
+        set t1.view_increase = (t1.view_count - ifnull(t2.view_count, 0)),
+        t1.vote_increase = (t1.vote_count - ifnull(t2.vote_count, 0))
         where t1.`date` = curdate();
     </update>
 
+    <!--  获取首页数值统计数据：总阅读数、总点赞数、今日阅读数、今日点赞数、今日预计阅读数、今日阅读预计增长  -->
+    <select id="getStatistic" resultType="com.tybbt.knowledgebase.resp.StatisticResp">
+        select t1.`date`             as `date`,
+               sum(t1.view_count)    as view_count,
+               sum(t1.vote_count)    as vote_count,
+               sum(t1.view_increase) as view_increase,
+               sum(t1.vote_increase) as vote_increase
+        from ebook_snapshot t1
+        where t1.`date` >= date_sub(curdate(), interval 1 day )
+        group by t1.`date`
+        order by t1.`date` asc;
+    </select>
 
 </mapper>
