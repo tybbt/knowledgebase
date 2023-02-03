@@ -148,38 +148,82 @@ export default defineComponent({
       });
     };
 
-    const testEcharts = () => {
+    const init30DayEcharts = (list: any) => {
       const myChart = echarts.init(document.getElementById('main'));
 
-      // 指定图表的配置项和数据
+      const xAxis = [];
+      const seriesView = [];
+      const seriesVote = [];
+      for (let i=0; i<list.length; i++) {
+        const record = list[i];
+        xAxis.push(record.date);
+        seriesView.push(record.viewIncrease);
+        seriesVote.push(record.voteIncrease);
+      }
+
       const option = {
         title: {
-          text: 'ECharts 入门示例'
+          text: '30天趋势图'
         },
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis'
+        },
         legend: {
-          data: ['销量']
+          data: ['总阅读量', '总点赞量']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
         xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+          type: 'category',
+          boundryGap: false,
+          data: xAxis
         },
-        yAxis: {},
+        yAxis: {
+          type: 'value'
+        },
         series: [
           {
-            name: '销量',
-            type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            name: '总阅读量',
+            type: 'line',
+            data: seriesView,
+            smooth: true
+          },
+          {
+            name: '总点赞量',
+            type: 'line',
+            data: seriesVote,
+            smooth: true
           }
         ]
       };
 
-      // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option);
-    }
+    };
+
+    const get30Statistic = () => {
+      axios.get("/ebook-snapshot/get-30-statistic").then((response) => {
+        const data = response.data;
+        if (data.success) {
+          const statisticList = data.content;
+          init30DayEcharts(statisticList);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
 
     onMounted(() => {
       getStatistic();
-      testEcharts();
+      get30Statistic();
     });
 
     return {

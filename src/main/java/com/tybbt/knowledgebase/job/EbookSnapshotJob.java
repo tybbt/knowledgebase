@@ -21,7 +21,7 @@ public class EbookSnapshotJob {
      * 自定义cron表达式跑批
      * 每30秒更新电子书信息
      */
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void cron() {
         // 增加日志流水号
         MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
