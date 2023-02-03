@@ -13,7 +13,7 @@ public class WsService {
     private WebSocketServer webSocketServer;
 
 
-    // 异步化解耦消息发送与点赞功能
+    // 异步化解耦消息发送与点赞功能，开启新线程发送通知
     @Async
     public void voteNotification(String message, String logId){
         // 推送消息
