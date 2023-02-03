@@ -1,11 +1,18 @@
 <template>
-  <h3>
-    启动前，请确认已启动redis，本地 cd -> D/downloads/REDIS
-    redis-server --service-start
-    使用后请结束
-    redis-server --service-stop
-    重启电脑后若报错先确认windows服务中redis服务是否启动。
-  </h3>
+  <a-alert
+      message="系统使用提示"
+      description="
+      启动前，请确认已启动redis。
+      本地 cd -> D/downloads/REDIS
+        cmd: redis-server --service-start
+      使用后请结束
+        cmd: redis-server --service-stop
+      重启电脑后若报错先确认windows服务中redis服务是否启动。"
+      type="info"
+      closable
+      show-icon
+      style="white-space: pre"
+  />
   <div>
     <a-row>
       <a-col :span="24">
